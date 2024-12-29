@@ -1,8 +1,10 @@
 const {Router} = require('express');
-const user_router = Router();
+const router = Router();
+const controller = require('../controller/user_controller');
 
-user_router.get("/", (req, res) => {
-    res.send("this is user data router using API");
-});
+router.get("/", controller.controller1);
+router.get("/:id", controller.controller2);
+router.get("/find/:username", controller.controller3);
+router.post("/add", controller.controller4);
 
-module.exports = user_router;
+module.exports = router;
