@@ -43,7 +43,6 @@ const controller3 = (req, res) => {
 const controller4 = (req, res) => {
     const { username, password, followed_user, joining_date } = req.body;
 
-    console.log(username);
     datatable.query(query.query4, [username], (error, result) => {
         if (error) {
             console.log(error);
@@ -52,10 +51,10 @@ const controller4 = (req, res) => {
                 res.send("username already taken!, try another username.");
             } else {
                 datatable.query(query.query5, [username, password, followed_user, joining_date], (error, result) => {
-                    if(error) {
+                    if (error) {
                         res.send("something gone wrong");
                     } else {
-                    res.send("Congratulations, account successfully created");
+                        res.send("Congratulations, account successfully created");
                     }
                 })
             }
@@ -63,15 +62,44 @@ const controller4 = (req, res) => {
     });
 }
 
-// delete the user
-const controller5 = async(req, res) => {
+// check and delete the user
+const controller5 = async (req, res) => {
     const id = Number.parseInt(req.params.id);
 
-    datatable.query(query.query6, [id], (error, result) => {
-        if (!result.rows.length) {
-            res.send("User you are looking for is not found!");
+    datatable.query(query.query2, [id], (error, result) => {
+        try {
+            if (!result.rows.length) {
+                res.send("User you are looking for is not found!");
+            } else {
+                datatable.query(query.query6, [id], (error, result) => {
+                    res.send("User deleted successfully!");
+                })
+            }
+        } catch {
+            res.send("something gone wrong", error);
         }
     })
 }
 
-module.exports = { controller1, controller2, controller3, controller4, controller5 };
+// update the existing user
+const controller6 = (req, res) => {
+    const id = parseInt(req.params.id);
+    const { password } = req.body;
+
+    datatable.query(query.query2, [id], (error, result) => {
+        if(result.rows.length) {
+            datatable.query(query.query7, [id, password], (error, result) => {
+                if(error) {
+                    res.send("something update query issue");
+                    console.log(error);
+                } else {
+                    res.send("your password changed successfully");
+                }
+            })
+        } else {
+            res.send("user not exist !");
+        }
+    })
+}
+
+module.exports = { controller1, controller2, controller3, controller4, controller5, controller6 };
