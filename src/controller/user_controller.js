@@ -51,10 +51,27 @@ const controller4 = (req, res) => {
             if (result.rows.length) {
                 res.send("username already taken!, try another username.");
             } else {
-                res.send("account successfully created");
+                datatable.query(query.query5, [username, password, followed_user, joining_date], (error, result) => {
+                    if(error) {
+                        res.send("something gone wrong");
+                    } else {
+                    res.send("Congratulations, account successfully created");
+                    }
+                })
             }
         }
     });
 }
 
-module.exports = { controller1, controller2, controller3, controller4 };
+// delete the user
+const controller5 = async(req, res) => {
+    const id = Number.parseInt(req.params.id);
+
+    datatable.query(query.query6, [id], (error, result) => {
+        if (!result.rows.length) {
+            res.send("User you are looking for is not found!");
+        }
+    })
+}
+
+module.exports = { controller1, controller2, controller3, controller4, controller5 };

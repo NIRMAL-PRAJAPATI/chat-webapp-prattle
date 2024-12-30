@@ -6,5 +6,6 @@ router.get("/", controller.controller1);
 router.get("/:id", controller.controller2);
 router.get("/find/:username", controller.controller3);
 router.post("/add", controller.controller4);
+router.delete("/delete/:id", controller.controller5);
 
 module.exports = router;
