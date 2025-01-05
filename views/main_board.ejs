@@ -27,35 +27,37 @@
             <!-- Left side: Person list -->
             <div class="w-full md:w-[40%] bg-gray-900 text-white overflow-y-scroll h-[calc(100vh)] border-r border-gray-700 flex flex-col" style="justify-content: space-between;">
                 <!-- search box -->
-                <div class="searchbox_style bg-gray-900 absolute p-4 top-0 left-0">
+                <div class="searchbox bg-gray-900 absolute p-4 w-[27%] left-[-100%]">
                     <div class="flex items-center">
                         <input type="text" placeholder="Type a message..."
-                            class="flex-1 border bg-gray-800 rounded py-2 px-4 focus:outline-none focus:ring-2 text-white focus:ring-green-500">
+                            class="flex-1 border border-gray-500 bg-gray-800 rounded py-2 px-4 outline-none focus: text-white focus:border-gray-100">
                         <button
                             class="ml-2 bg-green-700 text-white rounded px-4 py-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Send</button>
                     </div>
+                    <i class="closesearch fa-solid fa-xmark text-xl absolute top-1 right-[-3px] bg-gray-900 rounded-full px-2"></i>
                 </div>
                 <div>
                 <div class="flex font-semibold py-4 px-2 bg-gray-900 ml-1" style="justify-content: space-between;">
                     <div class="flex">
-                        <img src="/public/img/logo 1.png" class="h-5">
+                        <img src="/img/logo 1.png" class="h-5">
                         <h2 style="font-size: 23px; margin:-8px 0px -10px 0px;" class="tracking-wide text-blue-600">
                             &nbsp;Prattle</h2>
                     </div>
                     <div class="text-gray-400">
                         <i id="find_btn" class="fa-solid fa-users-viewfinder p-1 rounded hover:bg-gray-800" data-page="add_people.html"></i>
                         <i id="search_btn" class="fa-solid fa-magnifying-glass p-1 rounded hover:bg-gray-800"></i>
+                        <i id="logoutbtn" class="fa-solid fa-right-from-bracket text-ms p-1 rounded hover:bg-gray-800"></i>
                     </div>
                 </div>
                 <ul>
                     <li class="hover:bg-gray-800">
                         <div
                             class="flex items-center py-4 mx-4 cursor-pointer border-b border-gray-700  overflow-x-hidden">
-                            <img src="/placeholder.svg?height=40&width=40" alt="Person 1"
+                            <img src="../img/profile.png" alt="Person 1"
                                 class="w-10 h-10 rounded-full mr-3 border">
                             <div>
                                 <h3 class="font-medium">John Doe</h3>
-                                <p class="text-sm text-gray-600 truncate">Hey, how's it going? Lorem, ipsum dolor sit
+                                <p class="text-sm text-gray-600 truncate"> <spa class="font-bold">You: </spa>Hey, how's it going? Lorem, ipsum dolor sit
                                     amet consectetur adipisicing elit. Eos, ipsum ad porro neque iste facere repellat
                                     est qui! Atque error reiciendis beatae deserunt inventore quis consectetur totam
                                     facilis, ex expedita!</p>
@@ -64,14 +66,13 @@
                     </li>
                 </ul>
                 </div>
-                <div class="p-2 bg-gray-800 text-center text-red-700 text-xl tracking-wide font-bold">Logout <i class="fa-solid fa-right-from-bracket text-ms"></i></div>
             </div>
 
             <!-- Right side: Chat box -->
             <div id="right_side_box" class="w-full flex flex-col h-[calc(100vh)] bg-gray-900">
                 <div class="flex p-3 mx-0 text-white border-b border-gray-700" style="justify-content: space-between;">
                     <div class="flex">
-                    <img src="/placeholder.svg?height=40&width=40" alt="Person 1"
+                    <img src="../img/profile.png" alt="Person 1"
                         class="w-11 h-11 rounded-full mr-3 border">
                     <h2 class="text-2xl font-bold mt-1 tracking-wide">John Doe</h2>
                     </div>
@@ -107,7 +108,7 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="../public/js/main_board.js"></script>
+    <script src="../js/main_board.js"></script>
 </body>
 
 </html>

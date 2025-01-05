@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-800 h-screen flex items-center justify-center">
+    <!-- registration confirmer -->
+    <div id="confirmationbox" class="items-center <%= showdiv %> justify-center absolute w-full h-full text-center z-10" style="background-color: rgba(0, 0, 0, 0.534);">
+        <form class="p-10 bg-gray-800 w-[90%] md:w-[60%] lg:w-[40%]"  action="submit/create" method="POST">
+            <h2 class="font-bold text-3xl text-white">Are You Sure!</h2>
+            <p class="text-gray-400 my-3">Entered username is not exist, Would you like to create account with these username and password?</p>
+            <div class="flex">
+                <button type="submit" class="group relative w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 focus:outline-none hover:bg-blue-900 m-2">Yes, Do It</button>
+                <button type="button" id="cancelconfirmationbtn" class="group relative w-full py-2 px-4 border border text-sm font-medium rounded-md text-green-600 border-green-600 focus:outline-none hover:border-green-800 hover:text-green-800 m-2 tracking-wide">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="flex absolute top-3 left-3">
+        <img src="/img/logo 1.png" class="h-5">
+        <h2 style="font-size: 23px; margin:-8px 0px -10px 0px;" class="tracking-wide text-blue-600">
+            &nbsp;Prattle</h2>
+    </div>
+    <main class="flex">
+        <div class="mx-12 mt-20 w-[550px] hidden md:block">
+            <h1 class="text-white text-5xl font-bold tracking-wide">Communicate with others<span class="bg-blue-600"> anonymously</span></h1>
+            <p class="text-gray-500 mt-4">Prattle is a secure platform that allows users to chat anonymously without compromising their privacy or sharing any personal information. It fosters open and private communication, ensuring users can connect freely and safely with others.</p>
+        </div>
+    <div class="max-w-md w-full space-y-8 p-10 bg-gray-900 rounded-xl shadow-lg">
+        <div class="text-center">
+            <h2 class="mt-2 text-3xl font-extrabold text-gray-200">
+                Login to your account
+            </h2>
+        </div>
+        <form id="formsubmit" class="mt-8 space-y-6 text-sm" action="submit" method="POST">
+
+            <div class="rounded-md shadow-sm -space-y-px">
+                <p id="errormsg" class="text-red-500 -mt-3"><%= loginerrmsg %></p>
+                <div class="pt-2">
+                    <label for="user_id" class="sr-only">User Name</label>
+                    <input id="username" name="username" type="text" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white tracking-wide rounded-t-md rounded-b-md focus:outline-none focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Username" value="<%= username %>">
+                </div><br>
+                <div>
+                    <label for="password" class="sr-only">Password</label>
+                    <input id="password" name="password" type="password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 placeholder-gray-500 text-white tracking-wide rounded-t-md focus:outline-none focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Password" value="<%= password %>">
+                </div>
+                <div>
+                    <label for="password" class="sr-only">Confirm Password</label>
+                    <input id="conpassword" name="conpassword" type="password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border bg-gray-800 border-gray-700 placeholder-gray-500 text-white tracking-wide rounded-b-md focus:outline-none focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Confirm Password" value="<%= password %>">
+                </div>
+            </div>
+
+            <div>
+                <button id="formbtn" type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-700 focus:outline-none hover:bg-blue-700">Chat Now</button>
+            </div>
+        </form>
+        <div class="mt-10 text-gray-600 text-sm">NOTE:- Enter username and password to login, if entered username not exist then prattle creates your new account with entered username and password.</div>
+    </div>
+    </main>
+
+    <script src="/js/form.js"></script>
+</body>
+</html>
