@@ -1,28 +1,11 @@
 console.log("running boi")
 
 $(document).ready(() => {
-    $("#find_btn").on("click", (e) => {
-        e.preventDefault();
-        const page = e.target.dataset.page;
-        $("#right_side_box").html(`<p class="text-white m-5">Loading. . .</p>`);
 
-        console.log(page);
-        $.ajax({
-            url: page,
-            method: "GET",
-            success: (data) => {
-                $("#right_side_box").html(data);
-            },
-            error: () => {
-                $("#right_side_box").html(`<p class="text-white m-5">Error, Somthing Gone Wrong. . .</p>`)
-            }
-        })
-    })
-
+    // search button functionality
     let search_btn = document.querySelector('#search_btn');
     let searchbox = document.querySelector('.searchbox');
     let closesearch = document.querySelector('.closesearch');
-    console.log("d")
 
     search_btn.addEventListener("click", () => {
         if (searchbox.style.left != "0px") {
@@ -38,7 +21,7 @@ $(document).ready(() => {
 
     // logout function
     document.querySelector('#logoutbtn').addEventListener("click", () => {
-        fetch('/logout', {
+        fetch('/mainboard/logout', {
             method: 'GET',
             credentials: 'include',
         }).then(response => {
