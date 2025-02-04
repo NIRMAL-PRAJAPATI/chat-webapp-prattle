@@ -1,4 +1,4 @@
-const datatable = require('../model/user_model');
+const datatable = require('../db');
 const query = require('../query/user_query');
 
 // display all users

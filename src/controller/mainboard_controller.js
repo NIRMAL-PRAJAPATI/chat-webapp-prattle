@@ -1,4 +1,4 @@
-const datatable = require('../model/user_model');
+const datatable = require('../db');
 const mainboardquery = require('../query/mainboard_query');
 
 const controller1 = (req, res) => {
@@ -6,7 +6,7 @@ const controller1 = (req, res) => {
         if(result1) {
         datatable.query(mainboardquery.query1, [req.cookies.prattleuser], (error2, result2) => {
             if (result2) {
-                res.render('main_board', { loggedusername: req.cookies.prattleuser, users: result2.rows, loggeduserfollowing: result1.rows[0].followed_user });
+                res.render('main_board', { users: result2.rows, loggeduserfollowing: result1.rows[0].followed_user });
             } else {
                 console.log(error2);
                 res.send(error2);
@@ -23,4 +23,26 @@ const controller2 = (req, res) => {
     res.redirect('/')
 }
 
-module.exports = { controller1, controller2 }
+const controller3 = (req, res) => {
+    const { username } = req.body;
+    console.log("i am " + username);
+
+    datatable.query(mainboardquery.query3, [username, req.cookies.prattleuser], (error, result) => {
+        console.log(result.rows[0].exists);
+
+        if(result.rows[0].exists) {
+            res.redirect('/mainboard');
+        } else {
+            datatable.query(mainboardquery.query4, [username, req.cookies.prattleuser], (error, result) => {
+                if(error) {
+                    console.log(error);
+                    res.send("something gone wrong to chat with them");
+                } else {
+                    res.redirect('/mainboard');
+                }
+            })
+        }
+    })
+}
+
+module.exports = { controller1, controller2, controller3 }

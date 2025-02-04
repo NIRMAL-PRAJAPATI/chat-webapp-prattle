@@ -38,11 +38,11 @@
                 </div>
                 <div>
                 <div class="flex font-semibold py-4 px-2 border-b border-gray-800" style="justify-content: space-between;">
-                        <p class="tracking-wide text-xl"><%= loggedusername %></p>
+                        <p class="tracking-wide text-xl flex ml-1 text-blue-500"><img src="../img/logo 1.png" width="20" class="h-5 mt-1">&nbsp;Prattle</p>
                     <div class="text-gray-400">
                         <i id="find_btn" class="fa-solid fa-users-viewfinder p-1 rounded hover:bg-gray-800" data-page="chatboard"></i>
                         <i id="search_btn" class="fa-solid fa-magnifying-glass p-1 rounded hover:bg-gray-800"></i>
-                        <i id="logoutbtn" class="fa-solid fa-right-from-bracket text-ms p-1 rounded hover:bg-gray-800"></i>
+                        <i id="logoutbtn" class="fa-solid fa-right-from-bracket text-ms p-1 rounded hover:bg-gray-800" title="Logout"></i>
                     </div>
                 </div>
                 <ul>
@@ -70,26 +70,27 @@
             </div>
 
             <!-- Right side: Chat box -->
-                <div id="right_side_box" class="w-full h-[calc(100vh)] flex flex-col bg-gray-900 overflow-hidden">
-                <p class="text-gray-400 text-end text-sm pt-3 pr-4 select-none" style="margin: -13px -10px 0px 0px;"><span class="text-green-600 text-lg font-semibold"><%= users.length %></span> Active Users</p>
-                <p class="text-white text-3xl text-center font-bold mb-3 -mt-5 select-none">Chat with active users now</p>
-                <div class="container-fluid flex flex-wrap h-[calc(90vh)] overflow-y-scroll" style="justify-content: center;">
-                        <!-- Card -->
-                         <% users.forEach(user => { %>
-                        <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden text-center m-2 p-7" style="justify-content: center;">
-                                <h2 class="text-xl font-semibold text-white mb-2 truncate w-40"><%= user.username %></h2>
-                                <p class="text-sm text-gray-600 w-[130px] truncate select-none"><%= user.joining_date %></p>
-                                <button class="bg-green-600 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full w-full select-none">Chat Now</button>
-                        </div>
-                    <% });%>
-                </div>
+                <div id="right_side_box" class="w-full bg-gray-900 overflow-hidden">
+                <p class="text-gray-400 text-end text-sm pt-4 pr-4 select-none" style="margin: -13px -10px 0px 0px;"><span class="text-green-600 text-lg font-semibold border border-gray-600 px-1"><%= users.length %></span> Users Active</p>
+                <p class="text-white text-2xl text-center font-bold -mt-5 select-none">Chat with users now</p>
+                <p class="text-sm text-center mb-3 text-gray-600">(These users are loged in prattle to chat with others, you can chat with them in just one click)</p>
+                <div class="h-[87vh] overflow-y-scroll">
+                    <div class="flex flex-wrap justify-center">
+                    <% users.forEach(user => { %>
+                    <div class="bg-gray-800 rounded-lg shadow-md p-4 w-64 m-2 border border-gray-700 flex flex-col items-center">
+                        <h2 class="text-xl font-semibold text-white"><%= user.username %></h2>
+                        <p class="joining_date text-sm text-gray-500 my-2"><%= user.joining_date %></p>
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 mt-2 w-[100%]" onclick="checkfunc('<%= user.username %>')">Chat Now</button>
+                    </div>
+                    <% }); %>
+                    </div>
+                </div>                
                 </div>
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../js/main_board.js"></script>
-    <script src="../js/chat_board.js"></script>
 </body>
 
 </html>

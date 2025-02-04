@@ -1,4 +1,4 @@
-const datatable = require('../model/user_model');
+const datatable = require('../db');
 const loginquery = require('../query/loginuser_query');
 
 const controller1 = async (req, res) => {
@@ -29,12 +29,13 @@ const controller1 = async (req, res) => {
 const controller2 = async (req, res) => {
     const { username, password } = req.session;
 
-    datatable.query(loginquery.query3, [username, password], async (error, result) => {
+    datatable.query(loginquery.query3, [username, password, username], async (error, result) => {
         if (error) {
-            res.send("something gone wrong!")
-        }
+            res.send(error);
+        } else {
         await res.cookie('prattleuser', username);
         res.redirect('/mainboard');
+        }
     })
 }
 
