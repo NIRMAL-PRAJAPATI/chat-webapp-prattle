@@ -9,25 +9,13 @@ function getCookie(name) {
     return null;
 }
 
-const socket = io();
-        let currentUser = getCookie('prattleuser'); // Get the logged-in user from backend
-        socket.emit("register", currentUser); // Register this user to Socket.IO
-
-        let selectedUser = "martha2005"; // The user you are chatting with
-
         // Send message
         const sendMessagebtn = document.querySelector('#sendChatInput');
           sendMessagebtn.addEventListener('submit' , (e) => {
             e.preventDefault();
 
             let message = document.querySelector('#inputMessage').value;
-            if (selectedUser && message.length > 0) {
-                socket.emit("privateMessage", {
-                    sender: currentUser,
-                    receiver: selectedUser,
-                    message: message
-                });
-                console.log("sender: " + currentUser + " receiver: " + selectedUser);
+            if (message.length > 0) {
 
                 // Display sent message in chatbox
                 document.querySelector('#chatBox').innerHTML += `<div id="sendMessage" class="flex justify-end">
@@ -40,11 +28,3 @@ const socket = io();
             document.querySelector('#inputMessage').value = "";
             }
         })
-
-        // Receive private messages
-        socket.on("privateMessage", ({ sender, message }) => {
-            if (sender === selectedUser) {
-                document.getElementById("chat-box").innerHTML += `<div class="received">${message}</div>`;
-                console.log("message recived by " + selectedUser);
-            }
-        });

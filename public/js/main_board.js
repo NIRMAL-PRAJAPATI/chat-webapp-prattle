@@ -66,5 +66,16 @@ $(document).ready(() => {
             }
         }).catch(error => console.error('Error during logout:', error));
     })
-
 })
+
+const checkfunc = async (username) => {
+    await fetch("/mainboard/chatnow", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username: username }) // Sending data as JSON
+    })
+
+    window.location.reload();
+}
