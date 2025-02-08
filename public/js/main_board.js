@@ -1,4 +1,6 @@
 console.log("running boi")
+const socket = io();
+
 // get cookie by name function
 function getCookie(name) {
     const cookies = document.cookie.split('; ');
@@ -14,18 +16,17 @@ const loggedusername = getCookie("prattleuser");
 
 $(document).ready(() => {
 
+    socket.emit("registerUser", loggedusername);
+
     $(".followerlist").on("click", (e) => {
         e.preventDefault();
+        
         $("#right_side_box").html(`<p class="text-white m-5">Loading. . .</p>`);
-
-        console.log(loggedusername);
 
         const followerusername = e.target.closest('.followerlist > div[data-username]').getAttribute('data-username');
 
-        const chatboardID = [loggedusername, followerusername].sort().join('-chats-');
-
         $.ajax({
-            url: `/chatboard/${followerusername}`,
+            url: `/chatboard/${loggedusername}/${followerusername}`,
             method: "POST",
             success: (data) => {
                 $("#right_side_box").html(data);
