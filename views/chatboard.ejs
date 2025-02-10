@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Responsive Cards</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body>
     <div class="w-full flex flex-col h-[calc(100vh)] bg-gray-900">
         <div class="flex px-3 py-2 mx-0 text-white border-b border-gray-800" style="justify-content: space-between;">
             <div class="flex">
-            <img src="../img/profile.png" alt="Person 1"
-                class="w-11 h-11 rounded-full mr-3 border border-gray-600">
+                <img src="../img/profile.png" alt="Person 1" class="w-11 h-11 rounded-full mr-3 border border-gray-600">
                 <div>
-            <h2 id="takerusername" class="text-2xl -mt-1 font-bold tracking-wide"><%= user2 %></h2>
-            <div id="userStatusDiv">
-              </div>
-            </div>
+                    <h2 id="takerusername" class="text-2xl -mt-1 font-bold tracking-wide">
+                        <%= user2 %>
+                    </h2>
+                    <div id="userStatusDiv">
+                        <p class="text-sm text-gray-600 tracking-wide">Offline</p>
+                    </div>
+                </div>
             </div>
             <div class="flex pt-3 px-1 gap-4">
                 <i class="fa-solid fa-eraser text-gray-400 hover:text-white text-xl" title="Erase Chat"></i>
@@ -41,77 +45,82 @@
     <!-- <script src="../js/chat_board.js"></script> -->
 
     <script>
-        // const socket = io();
-
-function getCookie(name) {
-    const cookies = document.cookie.split('; ');
-    for (const cookie of cookies) {
-        const [key, value] = cookie.split('=');
-        if (key === name) {
-            return decodeURIComponent(value);
-        }
-    }
-    return null;
+        // Function to leave the current room
+function leaveChatRoom() {
+    let currentRoom = "<%= roomId %>";
+    socket.emit("leaveRoom", currentRoom);
 }
 
-let currentRoom = "<%= roomId %>";
+// get axect time function
+const time = () => {
+    return new Date().toLocaleTimeString("ed-US", {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+    });
+}
 
-// setInterval(() => {
-//     console.log(currentRoom);
-// }, 1000);
+// Handle user status update
+socket.on("userStatus", (data) => {
+    const { username, status } = data;
+    console.log(username + " is " + status);
 
-    socket.emit("startPrivateChat", { user1: "<%= user1 %>", user2: "<%= user2 %>" });
- 
-        // Send message
-        const sendMessagebtn = document.querySelector('#sendChatInput');
-          sendMessagebtn.addEventListener('submit' , (e) => {
-            e.preventDefault();
+    if (status === "online") {
+        document.querySelector('#userStatusDiv').innerHTML = `<p class="text-sm text-green-600 tracking-wide">Online</p>`;
+    } else {
+        document.querySelector('#userStatusDiv').innerHTML = `<p class="text-sm text-gray-600 tracking-wide">Offline</p>`;
+    }
+});
 
-            let message = document.querySelector('#inputMessage').value;
-            socket.emit("privateMessage", { roomId: currentRoom, sender: "<%= user1 %>", message });
+// Emit start private chat event
+socket.emit("startPrivateChat", { user1: "<%= user1 %>", user2: "<%= user2 %>" });
 
-            if (message.length > 0) {
-                // Display sent message in chatbox
-                document.querySelector('#chatBox').innerHTML += `<div id="sendMessage" class="flex justify-end">
-                <div class="bg-gray-800 text-white rounded-md py-3 px-4 max-w-[85%] lg:max-w-[65%]">
-                    <span class="flex justify-end text-green-600 text-[12px]" style="margin: -5px -5px -2px 0px;">You</span>
-                    <p>${message}</p>
-                        <span class="text-[12px] text-gray-500 flex mt-1 -ml-1">6:35 AM</span>
-                </div>
-            </div>`;
+// Send a message
+document.querySelector('#sendChatInput').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-            document.querySelector('#inputMessage').value = "";
-            }
-        })
+    let currentRoom = "<%= roomId %>";
+    console.log(currentRoom);
 
-        socket.on("privateMessage", ({currentRoom, sender, message}) => {
-            console.log("private message sender: " + sender + ", message: " + message);
+    let message = document.querySelector('#inputMessage').value;
+    await socket.emit("privateMessage", { roomId: currentRoom, sender: "<%= user1 %>", message });
 
-            document.querySelector('#chatBox').innerHTML += `<div id="recieveMessage" class="flex justify-start">
-                <div class="bg-gray-800 rounded-lg py-3 px-4 text-white max-w-[85%] lg:max-w-[65%]">
-                    <span class="flex justify-start text-blue-600 text-[12px]"
-                        style="margin: -5px 0px 0px -5px;">${sender}</span>
-                        <p>${message}</p>
-                        <span class="text-[12px] text-gray-500 justify-end flex mt-1 -mr-1">6:35 AM</span>
-                </div>
-            </div>`
-        })
+    if (message.length > 0) {
+        // Display sent message in chatbox
+        document.querySelector('#chatBox').innerHTML += `<div id="sendMessage" class="flex justify-end">
+            <div class="bg-gray-800 text-white rounded-md py-3 px-4 max-w-[85%] lg:max-w-[65%]">
+                <span class="flex justify-end text-green-600 text-[12px]" style="margin: -5px -5px -2px 0px;">You</span>
+                <p>${message}</p>
+                <span class="text-[12px] text-gray-500 flex mt-1 -ml-1">${time()}</span>
+            </div>
+        </div>`;
 
-        socket.on("disconnect", () => {
-            console.log("Client disconnected");
-        })
+        document.querySelector('#inputMessage').value = "";
+    }
+});
 
-        // user status updatation
-        // socket.on("userStatus", (data) => {
-        //     const { username, status } = data;
-        //     console.log(username + " is " + status);
+// Receive private message
+socket.off("privateMessage");
+socket.on("privateMessage", ({ sender, message }) => {
+    console.log("private message sender: " + sender + ", message: " + message);
 
-        //     if(status === "online") {
-        //         document.querySelector('#userStatusDiv').innerHTML = `<p class="text-sm text-green-600 tracking-wide">Online</p>`;
-        //     } else {
-        //         document.querySelector('#userStatusDiv').innerHTML = `<p class="text-sm text-gray-600 tracking-wide">Offline</p>`;
-        //     }
-        // })
+    if (message.length > 0) {
+        document.querySelector('#chatBox').innerHTML += `<div id="recieveMessage" class="flex justify-start">
+            <div class="bg-gray-800 rounded-lg py-3 px-4 text-white max-w-[85%] lg:max-w-[65%]">
+                <span class="flex justify-start text-blue-600 text-[12px]" style="margin: -5px 0px 0px -5px;">${sender}</span>
+                <p>${message}</p>
+                <span class="text-[12px] text-gray-500 justify-end flex mt-1 -mr-1">${time()}</span>
+            </div>
+        </div>`;
+    }
+});
+
+// Handle disconnection
+socket.on("disconnect", () => {
+    console.log("Client disconnected");
+});
+
     </script>
 </body>
+
 </html>

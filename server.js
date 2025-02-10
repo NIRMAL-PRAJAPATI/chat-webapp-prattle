@@ -13,50 +13,78 @@ const io = new Server(socketServer);
 const users = {};
 const rooms = {};
 
-// connect user
 io.on("connection", (socket) => {
-    console.log("user connected: ", socket.id);
+    console.log("User connected:", socket.id);
 
-    // register user
+    // Register user
     socket.on("registerUser", (username) => {
-        console.log(username)
+        console.log(username);
         users[username] = socket.id;
         io.emit("updateUserList", Object.keys(users));
-    })
+        io.emit("userStatus", { username: username, status: "online" });
+    });
 
-// Start private chat
-socket.on("startPrivateChat", ({ user1, user2 }) => {
-    const roomId = [user1, user2].sort().join("_chats_");
-    rooms[roomId] = roomId;
+    console.log(users);
 
-    socket.join(roomId);
-    if (users[user2]) {
-        io.to(users[user2]).emit("joinRoom", roomId);
-    }
-});
+    // Start private chat
+    socket.on("startPrivateChat", ({ user1, user2 }) => {
+        const roomId = [user1, user2].sort().join("_chats_");
+        rooms[roomId] = roomId;
 
-// Handle sending private messages
-socket.on("privateMessage", async ({ roomId, sender, message }) => {
-    // Send message to room
-    socket.to(roomId).emit("privateMessage", { sender, message });
-});
-
-// Handle disconnect
-socket.on("disconnect", () => {
-    let disConnectUser = null;
-
-    for (let username in users) {
-        if (users[username] === socket.id) {
-            disConnectUser = username;
-            delete users[username];
-            break;
+        // Leave any existing room before joining a new one
+        if (socket.currentRoom) {
+            socket.leave(socket.currentRoom);
+            console.log(`User ${socket.id} left room: ${socket.currentRoom}`);
         }
-    }
-    io.emit("updateUserList", Object.keys(users));
-    io.emit("userStatus", { username: disConnectUser, status: "offline" });
-    console.log("User disconnected:", socket.id);
+
+        // Join the new room
+        socket.currentRoom = roomId;
+        socket.join(roomId);
+        console.log(`User ${socket.id} joined room: ${roomId}`);
+
+        // Notify the other user to join
+        if (users[user2]) {
+            io.to(users[user2]).emit("joinRoom", roomId);
+        }
+    });
+
+    // Leave a chat room
+    socket.on("leaveRoom", (roomId) => {
+        socket.leave(roomId);
+        console.log(`User ${socket.id} left room: ${roomId}`);
+    });
+
+    // Handle sending private messages
+    socket.on("privateMessage", async ({ roomId, sender, message }) => {
+        // Send message to the room
+        socket.to(roomId).emit("privateMessage", { sender, message });
+    });
+
+    // Handle disconnect
+    socket.on("disconnect", () => {
+        let disConnectUser = null;
+
+        for (let username in users) {
+            if (users[username] === socket.id) {
+                disConnectUser = username;
+                delete users[username];
+                break;
+            }
+        }
+
+        io.emit("updateUserList", Object.keys(users));
+        io.emit("userStatus", { username: disConnectUser, status: "offline" });
+
+        // Leave the current room on disconnect
+        if (socket.currentRoom) {
+            socket.leave(socket.currentRoom);
+            console.log(`User ${socket.id} left room on disconnect: ${socket.currentRoom}`);
+        }
+
+        console.log("User disconnected:", socket.id);
+    });
 });
-})
+
 
 // routes
 const user_router = require('./src/route/user_route');

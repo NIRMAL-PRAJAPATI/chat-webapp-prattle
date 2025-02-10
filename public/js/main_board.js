@@ -21,13 +21,13 @@ $(document).ready(() => {
     $(".followerlist").on("click", (e) => {
         e.preventDefault();
         
-        $("#right_side_box").html(`<p class="text-white m-5">Loading. . .</p>`);
+        $("#right_side_box").empty().html(`<p class="text-white m-5">Loading. . .</p>`);
 
         const followerusername = e.target.closest('.followerlist > div[data-username]').getAttribute('data-username');
 
         $.ajax({
             url: `/chatboard/${loggedusername}/${followerusername}`,
-            method: "POST",
+            method: "GET",
             success: (data) => {
                 $("#right_side_box").html(data);
             },
