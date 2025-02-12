@@ -29,7 +29,7 @@ const controller1 = async (req, res) => {
 const controller2 = async (req, res) => {
     const { username, password } = req.session;
 
-    datatable.query(loginquery.query3, [username, password, username], async (error, result) => {
+    datatable.query(loginquery.query3, [username, password, "Prattle AI"], async (error, result) => {
         if (error) {
             res.send(error);
         } else {

@@ -45,12 +45,14 @@ $(document).ready(() => {
     search_btn.addEventListener("click", () => {
         if (searchbox.style.left != "0px") {
             searchbox.style.left = "0px";
+            searchbox.style.transition = "all 0.2s";
         }
     })
 
     closesearch.addEventListener("click", () => {
         if (searchbox.style.left == "0px") {
             searchbox.style.left = "-100%";
+            searchbox.style.transition = "all 0.2s";
         }
     })
 

@@ -17,6 +17,9 @@ form.addEventListener("submit", (e) => {
     } else if(/\s/.test(username.value)) {
         errormsg.textContent = "Username must not contain spaces!";
         return;
+    } else if(!/^[a-zA-Z0-9]+$/.test(username.value)) {
+        errormsg.textContent = "Username must contains only alphabets and numbers!";
+        return;
     }
 
     if(!password.value.match(passwordpattern)) {

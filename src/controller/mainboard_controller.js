@@ -6,7 +6,7 @@ const controller1 = (req, res) => {
         if(result1) {
         datatable.query(mainboardquery.query1, [req.cookies.prattleuser], (error2, result2) => {
             if (result2) {
-                res.render('main_board', { users: result2.rows, loggeduserfollowing: result1.rows[0].followed_user });
+                res.render('main_board', { users: result2.rows, loggeduserfollowing: result1.rows[0].followed_user, username: req.cookies.prattleuser });
             } else {
                 console.log(error2);
                 res.send(error2);

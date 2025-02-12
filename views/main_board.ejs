@@ -9,6 +9,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
+        html,
+        body {
+            overflow: hidden;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         .searchbox_style {
             width: 28%;
         }
@@ -21,72 +29,110 @@
     </style>
 </head>
 
-<body class="bg-gray-100">
-    <div class="container-fluid">
-        <div class="flex flex-col md:flex-row bg-gray-900">
-            <!-- Left side: Person list -->
-            <div class="w-full md:w-[40%] bg-gray-900 text-white overflow-y-scroll h-[calc(100vh)] border-r border-gray-700 flex flex-col" style="justify-content: space-between;">
-                <!-- search box -->
-                <div class="searchbox bg-gray-900 absolute p-4 w-[27%] left-[-100%]">
-                    <div class="flex items-center">
-                        <input type="text" placeholder="Enter username"
-                            class="flex-1 border border-gray-500 bg-gray-800 rounded py-2 px-4 outline-none focus: text-white focus:border-gray-100">
-                        <button
-                            class="ml-2 bg-green-700 text-white rounded px-4 py-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Search</button>
-                    </div>
-                    <i class="closesearch fa-solid fa-xmark text-xl absolute top-1 right-[-3px] bg-gray-900 rounded-full px-2"></i>
+<body class="bg-gray-900">
+    <div class="flex flex-col md:flex-row bg-gray-900">
+        <!-- Left side: Person list -->
+        <div id="left_side_box" class="w-full md:w-[38%] bg-gray-900 text-white border-r border-gray-700 flex flex-col"
+            style="justify-content: space-between;">
+            <!-- search box -->
+            <div class="searchbox bg-gray-900 absolute p-2 w-[27.2%] left-[-200%]">
+                <div class="flex items-center">
+                    <input type="text" placeholder="Enter username"
+                        class="flex-1 border border-gray-500 bg-gray-800 rounded py-2 px-4 outline-none focus: text-white focus:border-gray-100">
+                    <button
+                        class="ml-2 bg-green-700 text-white rounded px-4 py-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Search</button>
                 </div>
-                <div>
-                <div class="flex font-semibold py-4 px-2 border-b border-gray-800" style="justify-content: space-between;">
-                        <p class="tracking-wide text-xl flex ml-1 text-blue-500"><img src="../img/logo 1.png" width="20" class="h-5 mt-1">&nbsp;Prattle</p>
-                    <div class="text-gray-400">
-                        <i id="find_btn" class="fa-solid fa-users-viewfinder p-1 rounded hover:bg-gray-800" data-page="chatboard"></i>
+                <i
+                    class="closesearch fa-solid fa-xmark text-xl absolute top-0 right-[-8px] bg-gray-900 rounded-full px-2"></i>
+            </div>
+            <div>
+                <div class="flex font-semibold px-2 border-b border-gray-800" style="justify-content: space-between;">
+                    <div>
+                        <p class="tracking-wide text-[12px] flex text-blue-500 -ml-1"><img src="../img/logo 1.png" width="8"
+                                class="h-2 mt-[6px]">&nbsp;Prattle</p>
+                        <p class="ml-2 md:ml-0 lg:ml-2 text-xl mb-4">
+                            <%= username %>
+                        </p>
+                    </div>
+                    <div class="text-gray-400 mt-5 md:mt-1 lg:mt-5">
+                        <i id="find_btn" class="fa-solid fa-users-viewfinder p-1 rounded hover:bg-gray-800"
+                            data-page="chatboard"></i>
                         <i id="search_btn" class="fa-solid fa-magnifying-glass p-1 rounded hover:bg-gray-800"></i>
-                        <i id="logoutbtn" class="fa-solid fa-right-from-bracket text-ms p-1 rounded hover:bg-gray-800" title="Logout"></i>
+                        <i id="logoutbtn" class="fa-solid fa-right-from-bracket p-1 rounded hover:bg-gray-800"
+                            title="Logout"></i>
+                            <i class="fa-solid fa-xmark md:hidden bg-green-600 text-white p-2 rounded"></i>
                     </div>
                 </div>
-                <ul>
-                    <% if(loggeduserfollowing <= 0) { %>
+                <ul class="overflow-y-scroll h-[90vh]">
+                    <% if(loggeduserfollowing <=0) { %>
                         <P class="mt-3 ml-3 text-gray-600">You doesn't have any follower to chat</P>
                         <% } else { %>
-                    <% loggeduserfollowing.forEach(follower => { %>
-                    <li class="followerlist hover:bg-gray-800">
-                        <div class="flex items-center py-3 mx-2 cursor-pointer border-b border-gray-800  overflow-x-hidden" data-username="<%= follower %>">
-                            <img src="../img/profile.png" alt="Person 1"
-                                class="w-10 h-10 rounded-full mr-3 border border-gray-600 select-none">
-                            <div>
-                                <h3 class="font-medium tracking-wide text-gray-100"><%= follower %></h3>
-                                <p class="text-sm text-gray-500 truncate opacity-70 select-none"><span class="font-bold">You: </span>Hey, how's it going?</p>
-                            </div>
-                        </div>
-                    </li>
-                    <% }) %>
-                    <% } %>
+                            <% loggeduserfollowing.forEach(follower=> { %>
+                                <li class="followerlist hover:bg-gray-800">
+                                    <div class="flex items-center py-3 mx-2 cursor-pointer border-b border-gray-800  overflow-x-hidden"
+                                        data-username="<%= follower %>">
+                                        <% if(follower == "Prattle AI") { %>
+                                            <img src="../img/logo 1.png" alt="Person 1"
+                                            class="w-8 h-8 ml-1 mr-4 p-[3px] select-none">
+                                            <% } else { %>
+                                        <img src="../img/profile.png" alt="Person 1"
+                                            class="w-10 h-10 rounded-full mr-3 border border-gray-600 select-none">
+                                            <% } %>
+                                        <div>
+                                            <h3 class="font-medium tracking-wide text-gray-100">
+                                                <%= follower %>
+                                            </h3>
+                                            <p class="text-sm text-gray-500 truncate opacity-70 select-none"><span
+                                                    class="font-bold">You: </span>Hey, how's it going?</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <% }) %>
+                                    <% } %>
                 </ul>
-                </div>
+            </div>
+        </div>
+
+        <!-- Right side: Chat box -->
+        <div id="right_side_box" class="w-full bg-gray-900 overflow-hidden border-t border-gray-800">
+            <p class="text-gray-400 text-end text-[12px] pr-1 select-none"><span
+                    class="text-green-600 text-md font-semibold border border-gray-600 pl-1">
+                    <%= users.length %>
+                </span> Users Active</p>
+            <p class="text-white text-2xl text-center font-bold -mt-4 select-none">Chat with users now</p>
+            <p class="text-sm text-center mb-1 text-gray-600">(These users are logged in prattle to chat with others, you can chat with them in just one click)</p>
+            <!-- search box -->
+            <div class="flex items-center px-2 md:px-20 mb-2">
+                <input type="text" placeholder="Enter username to find prattle users worldwide"
+                    class="flex-1 border-b border-gray-500 bg-gray-800 rounded py-2 px-4 outline-none focus: text-white focus:border-gray-100">
+                <button
+                    class="ml-2 bg-green-700 text-white rounded px-4 py-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Search</button>
+                    <i class="fa-solid fa-filter text-gray-400 text-[20px] ml-2 hover:text-white"></i>
             </div>
 
-            <!-- Right side: Chat box -->
-                <div id="right_side_box" class="w-full bg-gray-900 overflow-hidden">
-                <p class="text-gray-400 text-end text-sm pt-4 pr-4 select-none" style="margin: -13px -10px 0px 0px;"><span class="text-green-600 text-lg font-semibold border border-gray-600 px-1"><%= users.length %></span> Users Active</p>
-                <p class="text-white text-2xl text-center font-bold -mt-5 select-none">Chat with users now</p>
-                <p class="text-sm text-center mb-3 text-gray-600">(These users are loged in prattle to chat with others, you can chat with them in just one click)</p>
-                <div class="h-[87vh] overflow-y-scroll">
-                    <div class="flex flex-wrap justify-center">
-                    <% users.forEach(user => { %>
-                    <div class="bg-gray-800 rounded-lg shadow-md p-4 w-64 m-2 border border-gray-700 flex flex-col items-center">
-                        <h2 class="text-xl font-semibold text-white"><%= user.username %></h2>
-                        <p class="joining_date text-sm text-gray-500 my-2"><%= user.joining_date %></p>
-                        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 mt-2 w-[100%]" onclick="checkfunc('<%= user.username %>')">Chat Now</button>
-                    </div>
-                    <% }); %>
-                    </div>
-                </div>                
+            <div class="h-[82vh] overflow-y-scroll">
+                <div class="flex flex-wrap justify-center">
+                    <% users.forEach(user=> { %>
+                        <div
+                            class="bg-gray-800 rounded-lg shadow-md p-4 w-64 m-2 border border-gray-700 flex flex-col items-center">
+                            <h2 class="text-xl font-semibold text-white">
+                                <%= user.username %>
+                            </h2>
+                            <p class="joining_date text-sm text-gray-500 my-2">
+                                <%= user.joining_date %>
+                            </p>
+                            <button
+                                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 mt-2 w-[100%]"
+                                onclick="checkfunc('<%= user.username %>')">Chat Now</button>
+                        </div>
+                        <% }); %>
                 </div>
+            </div>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="../js/main_board.js"></script>
 </body>

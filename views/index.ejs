@@ -22,7 +22,7 @@
     <!-- main page code -->
     <div class="flex absolute top-3 left-3">
         <img src="/img/logo 1.png" class="h-5">
-        <h2 style="font-size: 23px; margin:-8px 0px -10px 0px;" class="tracking-wide text-blue-600">
+        <h2 style="font-size: 23px; margin:-8px 0px -10px 0px;" class="tracking-wider text-blue-600">
             &nbsp;Prattle</h2>
     </div>
     <main class="flex">
@@ -37,12 +37,11 @@
             </h2>
         </div>
         <form id="formsubmit" class="mt-8 space-y-6 text-sm" action="submit" method="POST">
-
             <div class="rounded-md shadow-sm -space-y-px">
                 <p id="errormsg" class="text-red-500 -mt-3"><%= loginerrmsg %></p>
                 <div class="pt-2">
                     <label for="user_id" class="sr-only">User Name</label>
-                    <input id="username" name="username" type="text" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white tracking-wide rounded-t-md rounded-b-md focus:outline-none focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Username" value="<%= username %>">
+                    <input id="username" name="username" type="text" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white tracking-wide rounded-t-md rounded-b-md focus:outline-none focus:border-green-500 focus:z-10 sm:text-sm lowercase" placeholder="Username" value="<%= username %>">
                 </div><br>
                 <div>
                     <label for="password" class="sr-only">Password</label>
