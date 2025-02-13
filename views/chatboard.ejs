@@ -107,7 +107,7 @@
             let currentRoom = "<%= roomId %>";
             console.log(currentRoom);
 
-            let message = document.querySelector('#inputMessage').value;
+            let message = document.querySelector('#inputMessage').value.trim();
             await socket.emit("privateMessage", { roomId: currentRoom, sender: "<%= user1 %>", message });
 
             if (message.length > 0) {

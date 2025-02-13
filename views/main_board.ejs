@@ -36,9 +36,9 @@
             style="justify-content: space-between;">
             <!-- search box -->
             <div class="searchbox bg-gray-900 absolute p-2 w-[27.2%] left-[-200%]">
-                <div class="flex items-center">
+                <div class="flex items-center mt-1">
                     <input type="text" placeholder="Enter username"
-                        class="flex-1 border border-gray-500 bg-gray-800 rounded py-2 px-4 outline-none focus: text-white focus:border-gray-100">
+                        class="flex-1 border border-gray-500 bg-gray-800 rounded py-2 px-4 outline-none focus: text-white focus:border-gray-100 lowercase">
                     <button
                         class="ml-2 bg-green-700 text-white rounded px-4 py-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Search</button>
                 </div>
@@ -50,7 +50,7 @@
                     <div>
                         <p class="tracking-wide text-[12px] flex text-blue-500 -ml-1"><img src="../img/logo 1.png" width="8"
                                 class="h-2 mt-[6px]">&nbsp;Prattle</p>
-                        <p class="ml-2 md:ml-0 lg:ml-2 text-xl mb-4">
+                        <p class="ml-2 md:-ml-1 lg:ml-2 text-[24px] mb-3">
                             <%= username %>
                         </p>
                     </div>
@@ -95,22 +95,20 @@
 
         <!-- Right side: Chat box -->
         <div id="right_side_box" class="w-full bg-gray-900 overflow-hidden border-t border-gray-800">
-            <p class="text-gray-400 text-end text-[12px] pr-1 select-none"><span
-                    class="text-green-600 text-md font-semibold border border-gray-600 pl-1">
-                    <%= users.length %>
-                </span> Users Active</p>
-            <p class="text-white text-2xl text-center font-bold -mt-4 select-none">Chat with users now</p>
+            <p class="text-white text-2xl text-center font-bold select-none">Chat with users now</p>
             <p class="text-sm text-center mb-1 text-gray-600">(These users are logged in prattle to chat with others, you can chat with them in just one click)</p>
             <!-- search box -->
-            <div class="flex items-center px-2 md:px-20 mb-2">
-                <input type="text" placeholder="Enter username to find prattle users worldwide"
-                    class="flex-1 border-b border-gray-500 bg-gray-800 rounded py-2 px-4 outline-none focus: text-white focus:border-gray-100">
-                <button
-                    class="ml-2 bg-green-700 text-white rounded px-4 py-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Search</button>
+            <div class="flex items-center px-2 md:px-20 mb-2 mt-4">
+                <input type="text" id="searchInput" placeholder="Enter username to find prattle users worldwide"
+                    class="flex-1 border-b border-gray-500 bg-gray-800 rounded py-2 px-4 outline-none focus: text-white focus:border-gray-100 lowercase">
+                <button class="ml-2 bg-green-700 text-white rounded px-4 py-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500" onclick="searchUser();">Search</button>
                     <i class="fa-solid fa-filter text-gray-400 text-[20px] ml-2 hover:text-white"></i>
             </div>
 
             <div class="h-[82vh] overflow-y-scroll">
+                <p class="text-gray-400 text-end text-[12px] pr-1 select-none"><span
+                    class="text-green-600 text-md font-semibold pl-1"> <%= users.length %>
+                </span> users active</p>
                 <div class="flex flex-wrap justify-center">
                     <% users.forEach(user=> { %>
                         <div

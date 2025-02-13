@@ -82,3 +82,28 @@ const checkfunc = async (username) => {
 
     window.location.reload();
 }
+
+// search user
+async function searchUser() {
+    let username = document.getElementById("searchInput").value.trim();
+
+    if (username.length < 1) {
+        console.log("increase input length")
+        return;
+    }
+
+    try {
+        let response = await fetch(`/mainboard/search?username=${username}`);
+        let data = await response.json();
+
+        if (response.ok) {
+            data.forEach((user) => {
+                console.log(user.username);
+            })
+        } else {
+            console.log("user not available");
+        }
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+}

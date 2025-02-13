@@ -45,4 +45,26 @@ const controller3 = (req, res) => {
     })
 }
 
-module.exports = { controller1, controller2, controller3 }
+const controller4 = (req, res) => {
+    const { username } = req.query;
+
+    if (!username) {
+        return res.status(400).json({ error: "Username is required" });
+      }
+
+      try {
+        datatable.query(mainboardquery.query5, [`%${username}%`], (error, result) => {
+
+            if(result.rows > 0) {
+            res.json(result.rows);
+            console.log("result of " + username + " is : " + result.rows[0]);
+            } else {
+                res.status(404).json("no user found");
+            }
+        })
+      } catch(error) {
+        console.log("something gone wrong");
+      }
+}
+
+module.exports = { controller1, controller2, controller3, controller4 }
