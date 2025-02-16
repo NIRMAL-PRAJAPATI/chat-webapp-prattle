@@ -123,9 +123,9 @@
                 // Display sent message in chatbox
                 document.querySelector('#chatBox').innerHTML += `<div id="sendMessage" class="flex justify-end">
             <div class="bg-gray-800 text-white rounded-md py-3 px-4 max-w-[85%] lg:max-w-[65%]">
-                <span class="flex justify-end text-green-600 text-[12px] whitespace-pre-wrap" style="margin: -5px -5px -2px 0px;">You</span>
+                <span class="flex justify-end text-green-600 text-[11px] whitespace-pre-wrap" style="margin: -5px -5px -2px 0px;">You</span>
                 <p>${message}</p>
-                <span class="text-[12px] text-gray-500 flex mt-1 -ml-1">${time()}</span>
+                <span class="text-[11px] text-gray-500 flex mt-1 -ml-1">${time()}</span>
             </div>
         </div>`;
 
@@ -152,9 +152,9 @@
 
                 document.querySelector('#chatBox').innerHTML += `<div id="recieveMessage" class="flex justify-start">
             <div class="bg-gray-800 rounded-lg py-3 px-4 text-white max-w-[85%] lg:max-w-[65%]">
-                <span class="flex justify-start text-blue-600 text-[12px]" style="margin: -5px 0px 0px -5px;">${sender}</span>
+                <span class="flex justify-start text-blue-600 text-[11px]" style="margin: -5px 0px 0px -5px;">${sender}</span>
                 <p>${message}</p>
-                <span class="text-[12px] text-gray-500 justify-end flex mt-1 -mr-1">${time()}</span>
+                <span class="text-[11px] text-gray-500 justify-end flex mt-1 -mr-1">${time()}</span>
             </div>
         </div>`;
                 document.querySelector('#chatBox').scrollTop = document.querySelector('#chatBox').scrollHeight;
