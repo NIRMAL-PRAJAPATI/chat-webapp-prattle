@@ -9,6 +9,11 @@
 </head>
 
 <body>
+    <!-- sent Massage sound -->
+     <audio id="recieveMessageAudio">
+        <source src="../img/recieveMessage.mp3" type="audio/mp3">
+     </audio>
+
     <div class="w-full flex flex-col h-[calc(100vh)] bg-gray-900">
         <div class="flex px-3 py-2 mx-0 text-white border-b border-gray-800" style="justify-content: space-between;">
             <div class="flex">
@@ -158,6 +163,7 @@
             </div>
         </div>`;
                 document.querySelector('#chatBox').scrollTop = document.querySelector('#chatBox').scrollHeight;
+                document.querySelector('#recieveMessageAudio').play();
             }
         });
 

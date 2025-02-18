@@ -1,7 +1,7 @@
 const datatable = require('../db');
 const mainboardquery = require('../query/mainboard_query');
 
-const controller1 = (req, res) => {
+const controller1 = async(req, res) => {
     datatable.query(mainboardquery.query2, [req.cookies.prattleuser], (error1, result1) => {
         if (result1) {
             datatable.query(mainboardquery.query1, [req.cookies.prattleuser], (error2, result2) => {
@@ -18,25 +18,25 @@ const controller1 = (req, res) => {
     })
 }
 
-const controller2 = (req, res) => {
+const controller2 = async(req, res) => {
     res.clearCookie('prattleuser');
     res.redirect('/')
 }
 
-const controller3 = (req, res) => {
-    const { username } = req.body;
-    console.log("i am " + username);
+const controller3 = async (req, res) => {
+    const { username } = await req.body;
 
-    datatable.query(mainboardquery.query3, [username, req.cookies.prattleuser], (error, result) => {
-        if (result.rows[0].exists) {
+    datatable.query(mainboardquery.query3, [username, req.cookies.prattleuser], async (error, result) => {
+        console.log(result.rows[0].exists);
+        if (result.rows[0].exists) {               
             res.redirect('/mainboard');
         } else {
-            datatable.query(mainboardquery.query4, [username, req.cookies.prattleuser], (error, result) => {
+            datatable.query(mainboardquery.query4, [username, req.cookies.prattleuser], async (error, result) => {
                 if (error) {
                     console.log(error);
                     res.send("something gone wrong to tie-in with");
                 } else {
-                    datatable.query(mainboardquery.query4, [req.cookies.prattleuser, username], (error, result) => {
+                    datatable.query(mainboardquery.query4, [req.cookies.prattleuser, username], async (error, result) => {
                         if (error) {
                             console.log(error);
                             res.send("something gone wrong to tie-in with");
@@ -50,7 +50,7 @@ const controller3 = (req, res) => {
     })
 }
 
-const controller4 = (req, res) => {
+const controller4 = async(req, res) => {
     const { username } = req.query;
 
     if (!username) {
@@ -58,7 +58,7 @@ const controller4 = (req, res) => {
     }
 
     try {
-        datatable.query(mainboardquery.query5, [`%${username}%`], (error, result) => {
+        datatable.query(mainboardquery.query5, [`%${username}%`], async(error, result) => {
 
             if (result.rows.length > 0) {
                 res.json(result.rows);
