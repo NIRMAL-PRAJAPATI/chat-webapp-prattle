@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Interface</title>
+    <title>mainboard | prattle.com</title>
     <script src="https://kit.fontawesome.com/ae627849f8.js" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -182,34 +182,29 @@
                 are logged in prattle to chat with others,
                 you can chat with them in just one click)</p>
             <!-- search box -->
-            <div class="flex items-center px-2 md:px-20 mt-4">
-                <div class="flex-1">
+            <div class="flex items-center px-2 md:px-20 mt-4 w-100">
+                <div class="flex w-full">
                     <input type="text" id="searchInput" placeholder="Enter username to find prattle users worldwide"
                         class="w-full border-b border-gray-500 bg-gray-800 rounded py-2 px-4 outline-none focus: text-white focus:border-gray-100 lowercase">
-                    <!-- search container -->
+                    <!-- search result container -->
                     <div id="searchCont1"
-                        class="p-4 bg-gray-700 absolute w-[52%] max-h-[80vh] rounded hidden overflow-y-scroll">
+                        class="p-4 bg-gray-700 absolute w-[52%] max-h-[80vh] rounded hidden overflow-y-scroll mt-11">
                         <i id="hideSearchCont"
                             class="fa-solid fa-xmark absolute right-0 -mt-3 mr-2 text-xl text-white"></i>
                         <ul id="globalSearchedUsername" class="space-y-2 mt-3">
                         </ul>
                     </div>
-                </div>
-                <button id="globalSearchBtn"
+                    <button id="globalSearchBtn"
                     class="ml-2 bg-green-700 text-white rounded px-4 py-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     onclick="searchUser();">Search</button>
+                </div>
+                
                 <i id="openFilterBtn" class="fa-solid fa-filter text-gray-400 text-[20px] ml-2 hover:text-white"></i>
             </div>
 
             <div class="h-[82vh] overflow-y-scroll">
                 <div class="container mx-auto px-4 mt-2">
-                    <div class="flex justify-between mb-1">
-                        <h1 class="text-white tracking-wide text-xl ml-5">Recommendation</h1>
-                        <p class="text-gray-400 text-end text-[12px] mr-2 select-none"><span
-                                class="text-green-600 text-md font-semibold">
-                                <%= users.length %>
-                            </span> users active</p>
-                    </div>
+                        <h1 class="text-white tracking-wide text-xl ml-5 mb-1">Recommendation</h1>
                     <ul class="space-y-2">
                         <% users.forEach(user=> { %>
                             <li

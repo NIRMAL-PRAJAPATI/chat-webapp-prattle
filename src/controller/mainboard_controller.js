@@ -9,11 +9,11 @@ const controller1 = async(req, res) => {
                     res.render('main_board', { users: result2.rows, loggeduserfollowing: result1.rows[0].followed_user, username: req.cookies.prattleuser });
                 } else {
                     console.log(error2);
-                    res.send(error2);
+                    res.status(500).render('error', { errorCode: 500, errorHeading: "Data Fetch Error !", errorDescription: "Due to internal server error, account data not being fetched, try again after sometimes." });
                 }
             })
         } else {
-            res.send("something gone wrong" + error1);
+            res.status(500).render('error', { errorCode: 500, errorHeading: "Data Fetch Error !", errorDescription: "Due to internal server error, account data not being fetched, try again after sometimes." });
         }
     })
 }
@@ -34,12 +34,12 @@ const controller3 = async (req, res) => {
             datatable.query(mainboardquery.query4, [username, req.cookies.prattleuser], async (error, result) => {
                 if (error) {
                     console.log(error);
-                    res.send("something gone wrong to tie-in with");
+                     res.status(404).render('error', { errorCode: 500, errorHeading: "Account Tie-In Error !", errorDescription: "Due to internal server error a user you want to tie-in with is not working, try again after sometimes." });
                 } else {
                     datatable.query(mainboardquery.query4, [req.cookies.prattleuser, username], async (error, result) => {
                         if (error) {
                             console.log(error);
-                            res.send("something gone wrong to tie-in with");
+                             res.status(404).render('error', { errorCode: 500, errorHeading: "Account Tie-In Error !", errorDescription: "Due to internal server error a user you want to tie-in with is not working, try again after sometimes." });
                         } else {
                             res.redirect('/mainboard');
                         }
@@ -68,7 +68,7 @@ const controller4 = async(req, res) => {
             }
         })
     } catch (error) {
-        console.log("something gone wrong");
+        res.status(500).render('error', { errorCode: 500, errorHeading: "Something Gone Wrong !", errorDescription: "Due to internal server error Search functionality not working, try again after sometimes." });
     }
 }
 

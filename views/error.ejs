@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Document</title>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+    <div class="w-full max-w-lg px-4 py-8 text-center">
+        <div>
+            <!-- Error Code -->
+            <h1 class="text-6xl md:ml-[140px] mb-2 md:-mb-[27%] font-extrabold text-gray-700 dark:text-blue-700"><%= errorCode %></h1>
+            <img src="../img/error_img.svg"  class="hidden md:block h-[40%] w-[40%]  ml-[130px]">
+            
+            <div>
+            <!-- Error Message -->
+            <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100"><%= errorHeading %></h2>
+            
+            <!-- Error Description -->
+            <p class="text-gray-600 dark:text-gray-500 mt-2 mb-4"><%= errorDescription %></p>
+            
+            <!-- Back to Home Button -->
+                <button class="inline-flex items-center justify-center py-3 px-6 font-medium text-white bg-green-600 rounded tracking-wide hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">
+                    Go Back to Home
+            </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

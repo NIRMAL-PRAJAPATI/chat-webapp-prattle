@@ -110,7 +110,11 @@ socketServer.listen(port, () => console.log(`Server running on http://localhost:
 
 // loginuser route
 app.get('/', (req, res) => {
+    if(req.cookies.prattleuser) {
+        res.redirect('mainboard');
+    } else {
     res.render('index', { loginerrmsg: "", username: "", password: "", showdiv: "hidden"});
+    }
 })
 app.use('/submit', loginuser_route);
 
