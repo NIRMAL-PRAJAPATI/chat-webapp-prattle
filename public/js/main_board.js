@@ -15,6 +15,14 @@ function getCookie(name) {
 const loggedusername = getCookie("prattleuser");
 
 $(document).ready(() => {
+    // open and close functionality of follower list
+document.querySelector('#openFollowerList').addEventListener('click', () => {
+    document.querySelector('#left_side_box').style.display = "block";
+})
+
+document.querySelector('#closeFollowerList').addEventListener('click', () => {
+    document.querySelector('#left_side_box').style.display = "none";
+})
 
     socket.emit("registerUser", loggedusername);
 

@@ -10,33 +10,34 @@
 
 <body>
     <!-- sent Massage sound -->
-     <audio id="recieveMessageAudio">
+    <audio id="recieveMessageAudio">
         <source src="../img/recieveMessage.mp3" type="audio/mp3">
-     </audio>
+    </audio>
 
     <div class="w-full flex flex-col h-[calc(100vh)] bg-gray-900">
+        <p id="openFollowerList" class="md:hidden text-white bg-green-500 py-3 text-center tracking-wide">Open FollowersList</p>
         <div class="flex px-3 py-2 mx-0 text-white border-b border-gray-800" style="justify-content: space-between;">
             <div class="flex">
-                <% if(user2 == "Prattle AI") { %>
-                    <img src="../img/logo 1.png" alt="Person 1"
-                    class="w-11 h-11 mr-1 p-[7px]">
+                <% if(user2=="Prattle AI" ) { %>
+                    <img src="../img/logo 1.png" alt="Person 1" class="w-11 h-11 mr-1 p-[7px]">
                     <% } else { %>
-                <img src="../img/profile.png" alt="Person 1" class="w-11 h-11 rounded-full mr-3 border border-gray-600">
-                <% } %>
-                <div>
-                    <h2 id="takerusername" class="text-2xl -mt-1 font-bold tracking-wide">
-                        <%= user2 %>
-                    </h2>
-                    <div id="userStatusDiv">
-                        <p class="text-sm text-gray-600 tracking-wide">
-                            <% if(user2 == "Prattle AI") { %>
-                                AI ChatBot to help you
-                                <% } else { %>
-                                    Offline
-                                    <% } %>
-                        </p>
-                    </div>
-                </div>
+                        <img src="../img/profile.png" alt="Person 1"
+                            class="w-11 h-11 rounded-full mr-3 border border-gray-600">
+                        <% } %>
+                            <div>
+                                <h2 id="takerusername" class="md:text-2xl -mt-1 font-bold tracking-wide">
+                                    <%= user2 %>
+                                </h2>
+                                <div id="userStatusDiv">
+                                    <p class="text-xs md:text-sm text-gray-600 tracking-wide">
+                                        <% if(user2=="Prattle AI" ) { %>
+                                            AI ChatBot to help you
+                                            <% } else { %>
+                                                Offline
+                                                <% } %>
+                                    </p>
+                                </div>
+                            </div>
             </div>
             <div class="flex pt-3 px-1 gap-4">
                 <i class="fa-solid fa-eraser text-gray-400 hover:text-white text-xl" title="Erase Chat"></i>
@@ -63,6 +64,14 @@
             <!-- here is the chatbox where all messages are loaded -->
         </div>
         <div class="bg-gray-900 p-3">
+            <p id="thinkLoading" class="hidden mt-8 font-medium text-gray-400 tracking-wide items-center animate-pulse delay-50">
+                PrattleAI is Thinking
+                <span class="ml-2 mt-3 flex space-x-1">
+                    <span class="h-1 w-1 bg-blue-500 rounded-full animate-pulse"></span>
+                    <span class="h-1 w-1 bg-blue-500 rounded-full animate-pulse delay-150"></span>
+                    <span class="h-1 w-1 bg-blue-500 rounded-full animate-pulse delay-300"></span>
+                </span>
+            </p>
             <form id="sendChatInput" class="flex items-center">
                 <input id="inputMessage" type="text" placeholder="Type a message..."
                     class="flex-1 border border-gray-600 text-white bg-gray-800 rounded py-2 px-4 outline-none focus:border-white">
@@ -76,6 +85,11 @@
     <!-- <script src="../js/chat_board.js"></script> -->
 
     <script>
+        // open close functionality in followers
+        document.querySelector('#openFollowerList').addEventListener('click', () => {
+    document.querySelector('#left_side_box').style.display = "block";
+})
+
         document.querySelector('#userDetailsBtn').addEventListener('mouseover', () => {
             document.querySelector('#userDetailsCont').style.display = 'block';
         })
@@ -86,8 +100,7 @@
 
         // Function to leave the current room
         function leaveChatRoom() {
-            let currentRoom = "<%= roomId %>";
-            socket.emit("leaveRoom", currentRoom);
+            socket.emit("leaveRoom", "<%= roomId %>");
         }
 
         // Handle user status update
@@ -105,72 +118,128 @@
         // Emit start private chat event
         socket.emit("startPrivateChat", { user1: "<%= user1 %>", user2: "<%= user2 %>" });
 
-        // Send a message
-        document.querySelector('#sendChatInput').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        if ("<%= roomId %>" != "Prattle AI") {
+            // Send a message
+            document.querySelector('#sendChatInput').addEventListener('submit', async (e) => {
+                e.preventDefault();
 
-            let currentRoom = "<%= roomId %>";
-            console.log(currentRoom);
+                let message = document.querySelector('#inputMessage').value.trim();
 
-            let message = document.querySelector('#inputMessage').value.trim();
-            await socket.emit("privateMessage", { roomId: currentRoom, sender: "<%= user1 %>", message });
+                if (message.length > 0) {
+                    await socket.emit("privateMessage", { roomId: "<%= roomId %>", sender: "<%= user1 %>", message });
 
-            if (message.length > 0) {
-                // get axect time function
-                const time = () => {
-                    return new Date().toLocaleTimeString("ed-US", {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true,
-                    });
-                }
-
-                // Display sent message in chatbox
-                document.querySelector('#chatBox').innerHTML += `<div id="sendMessage" class="flex justify-end">
+                    // Display sent message in chatbox
+                    document.querySelector('#chatBox').innerHTML += `<div id="sendMessage" class="flex justify-end">
             <div class="bg-gray-800 text-white rounded-md py-3 px-4 max-w-[85%] lg:max-w-[65%]">
                 <span class="flex justify-end text-green-600 text-[11px] whitespace-pre-wrap" style="margin: -5px -5px -2px 0px;">You</span>
                 <p>${message}</p>
-                <span class="text-[11px] text-gray-500 flex mt-1 -ml-1">${time()}</span>
+                <span class="text-[11px] text-gray-500 flex mt-1 -ml-1">${(() => {
+                            return new Date().toLocaleTimeString("en-US", {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true,
+                            });
+                        })()}</span>
             </div>
         </div>`;
 
-                document.querySelector('#inputMessage').value = "";
+                    document.querySelector('#inputMessage').value = "";
 
-                document.querySelector('#chatBox').scrollTop = document.querySelector('#chatBox').scrollHeight;
-            }
-        });
-
-        // Receive private message
-        socket.off("privateMessage");
-        socket.on("privateMessage", ({ sender, message }) => {
-            console.log("private message sender: " + sender + ", message: " + message);
-
-            if (message.length > 0) {
-                // get axect time function
-                const time = () => {
-                    return new Date().toLocaleTimeString("ed-US", {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true,
-                    });
+                    document.querySelector('#chatBox').scrollTop = document.querySelector('#chatBox').scrollHeight;
                 }
+            });
 
-                document.querySelector('#chatBox').innerHTML += `<div id="recieveMessage" class="flex justify-start">
+            // Receive private message
+            socket.off("privateMessage");
+            socket.on("privateMessage", ({ sender, message }) => {
+                console.log("private message sender: " + sender + ", message: " + message);
+
+                if (message.length > 0) {
+                    document.querySelector('#chatBox').innerHTML += `<div id="recieveMessage" class="flex justify-start">
             <div class="bg-gray-800 rounded-lg py-3 px-4 text-white max-w-[85%] lg:max-w-[65%]">
                 <span class="flex justify-start text-blue-600 text-[11px]" style="margin: -5px 0px 0px -5px;">${sender}</span>
                 <p>${message}</p>
-                <span class="text-[11px] text-gray-500 justify-end flex mt-1 -mr-1">${time()}</span>
+                <span class="text-[11px] text-gray-500 justify-end flex mt-1 -mr-1">${(() => {
+                            return new Date().toLocaleTimeString("en-US", {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true,
+                            });
+                        })()}</span>
             </div>
         </div>`;
-                document.querySelector('#chatBox').scrollTop = document.querySelector('#chatBox').scrollHeight;
-                document.querySelector('#recieveMessageAudio').play();
-            }
-        });
+                    document.querySelector('#chatBox').scrollTop = document.querySelector('#chatBox').scrollHeight;
+                    document.querySelector('#recieveMessageAudio').play();
+                }
+            });
 
-        // Handle disconnection
-        socket.on("disconnect", () => {
-            console.log("Client disconnected");
-        });
+            // Handle disconnection
+            socket.on("disconnect", () => {
+                console.log("Client disconnected");
+            });
+
+        } else {
+            // All the logic which is used to make AI chatbot is written here
+            // Send a message
+            document.querySelector('#sendChatInput').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                let message = document.querySelector('#inputMessage').value.trim();
+
+                if (message.length > 0) {
+                    document.querySelector('#sendChatInput').classList.add("hidden");
+                    document.querySelector('#thinkLoading').style.display = "flex";
+
+                    socket.emit("chatbot_request", message);
+
+                    // Display sent message in chatbox
+                    document.querySelector('#chatBox').innerHTML += `<div id="sendMessage" class="flex justify-end">
+            <div class="bg-gray-800 text-white rounded-md py-3 px-4 max-w-[85%] lg:max-w-[65%]">
+                <span class="flex justify-end text-green-600 text-[11px] whitespace-pre-wrap" style="margin: -5px -5px -2px 0px;">You</span>
+                <p>${message}</p>
+                <span class="text-[11px] text-gray-500 flex mt-1 -ml-1">${(() => {
+                            return new Date().toLocaleTimeString("en-US", {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true,
+                            });
+                        })()}</span>
+            </div>
+        </div>`;
+
+                    document.querySelector('#inputMessage').value = "";
+
+                    document.querySelector('#chatBox').scrollTop = document.querySelector('#chatBox').scrollHeight;
+                }
+            });
+
+            // Receive chatbot message
+            socket.off("chatbot_response");
+            socket.on("chatbot_response", (message) => {
+                console.log("bot message: " + message);
+
+                if (message.length > 0) {
+                    document.querySelector('#chatBox').innerHTML += `<div id="recieveMessage" class="flex justify-start">
+            <div class="bg-gray-800 rounded-lg py-3 px-4 text-white max-w-[85%] lg:max-w-[65%]">
+                <span class="flex justify-start text-blue-600 text-[11px]" style="margin: -5px 0px 0px -5px;">Prattle AI</span>
+                <p class="whitespace-pre-wrap break-words">${message}</p>
+                <span class="text-[11px] text-gray-500 justify-end flex mt-1 -mr-1">${(() => {
+                            return new Date().toLocaleTimeString("en-US", {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true,
+                            });
+                        })()}</span>
+            </div>
+        </div>`;
+                    document.querySelector('#chatBox').scrollTop = document.querySelector('#chatBox').scrollHeight;
+                    document.querySelector('#recieveMessageAudio').play();
+
+                    document.querySelector('#thinkLoading').style.display = "none"
+                    document.querySelector('#sendChatInput').classList.remove("hidden");
+                }
+            });
+        }
 
     </script>
 </body>

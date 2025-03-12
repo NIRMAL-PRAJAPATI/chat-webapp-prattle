@@ -3,12 +3,17 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const { Server } = require('socket.io')
 const http = require('http');
+const axios = require("axios");
 
 const app = express();
-const port = 3000;
+const port = 4000;
 
 const socketServer = http.createServer(app);
 const io = new Server(socketServer);
+
+
+const API_KEY = "AIzaSyC9mrBsPgzA2J7la-PROx52OqiHIYytk3Q";
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
 
 const users = {};
 const rooms = {};
@@ -83,6 +88,25 @@ io.on("connection", (socket) => {
 
         console.log("User disconnected:", socket.id);
     });
+
+    // All logic of AI chatbot is written here
+    socket.on("chatbot_request", async (message) => {
+        console.log("User: " + message);
+
+        try {
+            const response = await axios.post(GEMINI_URL, {
+                contents: [{ role: "user", parts: [{ text: message }] }]
+            });
+            
+
+            const botReply = response.data.candidates[0]?.content.parts[0]?.text || "Sorry, I couldn't understand.";
+            socket.emit("chatbot_response", botReply);
+            console.log("Bot:", botReply);
+        } catch (error) {
+            console.error("Error with Google Gemini API:", error);
+            socket.emit("chatbot_response", "Sorry, an error occurred.");
+        }
+    });
 });
 
 
@@ -94,7 +118,6 @@ const chatboard_route = require('./src/route/chatboard_route');
 
 // middlewares
 const sessioncreate = require('./src/middleware/confirmationbox');
-const { object } = require('joi');
 
 app.set('view engine', 'ejs');
 
