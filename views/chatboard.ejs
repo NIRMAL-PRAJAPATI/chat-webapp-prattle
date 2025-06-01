@@ -14,7 +14,7 @@
         <source src="../img/recieveMessage.mp3" type="audio/mp3">
     </audio>
 
-    <div class="w-full bg-gray-900">
+    <div class="w-full flex flex-col h-screen max-h-screen bg-gray-900">
         <div class="flex px-3 py-2 mx-0 text-white border-b border-gray-800" style="justify-content: space-between;">
             <div class="flex">
                 <% if(user2=="Prattle AI" ) { %>
@@ -126,8 +126,8 @@
                     document.querySelector('#chatBox').innerHTML += `<div id="sendMessage" class="flex justify-end">
             <div class="bg-gray-800 text-white rounded-md py-3 px-4 max-w-[85%] lg:max-w-[65%]">
                 <span class="flex justify-end text-green-600 text-[11px] whitespace-pre-wrap" style="margin: -5px -5px -2px 0px;">You</span>
-                <p>${message}</p>
-                <span class="text-[11px] text-gray-500 flex mt-1 -ml-1">${(() => {
+                <p class="text-[17px] sm:text-md">${message}</p>
+                <span class="text-[11px] text-gray-500 flex mt-1 -mb-2 -ml-2">${(() => {
                             return new Date().toLocaleTimeString("en-US", {
                                 hour: '2-digit',
                                 minute: '2-digit',
@@ -152,8 +152,8 @@
                     document.querySelector('#chatBox').innerHTML += `<div id="recieveMessage" class="flex justify-start">
             <div class="bg-gray-800 rounded-lg py-3 px-4 text-white max-w-[85%] lg:max-w-[65%]">
                 <span class="flex justify-start text-blue-600 text-[11px]" style="margin: -5px 0px 0px -5px;">${sender}</span>
-                <p>${message}</p>
-                <span class="text-[11px] text-gray-500 justify-end flex mt-1 -mr-1">${(() => {
+                <p class="text-[17px] sm:text-md">${message}</p>
+                <span class="text-[11px] text-gray-500 justify-end flex mt-1 -mb-2 -mr-2">${(() => {
                             return new Date().toLocaleTimeString("en-US", {
                                 hour: '2-digit',
                                 minute: '2-digit',
