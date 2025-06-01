@@ -33,11 +33,10 @@
     <div class="flex flex-col md:flex-row bg-gray-900">
         <!-- Left side: Person list -->
         <div id="left_side_box"
-            class="h-[100vh] w-full md:w-[38%] bg-gray-900 text-white border-r border-gray-700 flex flex-col"
+            class="h-[100vh] w-full md:w-[33%] bg-gray-900 text-white border-r border-gray-700 flex flex-col"
             style="justify-content: space-between;">
-            <p id="closeFollowerList" class="md:hidden text-white bg-green-500 py-3 text-center tracking-wide">Close FollowersList</p>
             <!-- search box -->
-            <div id="searchbox" class="bg-gray-900 absolute p-2 w-[27.2%] left-[-200%]">
+            <div id="searchbox" class="bg-gray-900 absolute p-2 w-[98%] md:max-w-[24%] left-[-200%]">
                 <div class="flex items-center mt-1">
                     <input id="followerSearchInput" type="text" placeholder="Enter username"
                         class="flex-1 border border-gray-500 bg-gray-800 rounded py-2 px-4 outline-none focus: text-white focus:border-gray-100 lowercase"
@@ -93,7 +92,7 @@
                                                         <%= follower %>
                                                     </h3>
                                                     <p class="text-sm text-gray-500 truncate opacity-70 select-none">
-                                                        <span class="font-bold">You: </span>I am here to help you
+                                                        Now you can talk with <%= follower %>
                                                     </p>
                                                 </div>
                                                 <% } %>
@@ -108,7 +107,6 @@
 
         <!-- Right side: Chat box -->
         <div id="right_side_box" class="w-full bg-gray-900 overflow-hidden border-t border-gray-800">
-            <p id="openFollowerList" class="md:hidden text-white bg-green-500 py-3 text-center tracking-wide">Open FollowersList</p>
             <!-- search box -->
             <div class="flex items-center px-2 md:px-20 mt-4 w-100">
                 <div class="flex w-full">
@@ -163,9 +161,6 @@
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="../js/main_board.js"></script>
-
-    <script>
-    </script>
 </body>
 
 </html>

@@ -15,7 +15,6 @@
     </audio>
 
     <div class="w-full flex flex-col h-[calc(100vh)] bg-gray-900">
-        <p id="openFollowerList" class="md:hidden text-white bg-green-500 py-3 text-center tracking-wide">Open FollowersList</p>
         <div class="flex px-3 py-2 mx-0 text-white border-b border-gray-800" style="justify-content: space-between;">
             <div class="flex">
                 <% if(user2=="Prattle AI" ) { %>
@@ -25,7 +24,7 @@
                             class="w-11 h-11 rounded-full mr-3 border border-gray-600">
                         <% } %>
                             <div>
-                                <h2 id="takerusername" class="md:text-2xl -mt-1 font-bold tracking-wide">
+                                <h2 id="takerusername" class="md:text-2xl mt-1 sm:mt-0 font-bold tracking-wide">
                                     <%= user2 %>
                                 </h2>
                                 <div id="userStatusDiv">
@@ -45,11 +44,11 @@
                 <i id="userDetailsBtn" class="fa-solid fa-circle-info text-gray-400 hover:text-white text-xl"></i>
                 <!-- userDetails container -->
                 <div id="userDetailsCont"
-                    class="absolute py-2 px-3 bg-gray-700 rounded text-gray-300 w-[300px] right-0 m-2 mt-7 text-[12px] tracking-wider hidden">
+                    class="absolute py-2 px-3 bg-gray-700 rounded text-gray-300 w-[300px] right-0 m-2 mt-7 text-[12px] tracking-wider hidden overflow-hidden">
                     <p class="mb-1">Prattle userID: <span class="text-sm text-green-500 font-bold">
-                            <%= userDetails.id %>
+                            018<%= userDetails.id %>468
                         </span></p>
-                    <p class="mb-1">Joining Date: <span class="text-sm text-green-500 font-bold">
+                    <p class="mb-1 flex">Joining&nbsp;Date:&nbsp;<span class="text-sm text-green-500 font-bold truncate">
                             <%= userDetails.joining_date %>
                         </span></p>
                     <p class="mb-1">
@@ -85,11 +84,6 @@
     <!-- <script src="../js/chat_board.js"></script> -->
 
     <script>
-        // open close functionality in followers
-        document.querySelector('#openFollowerList').addEventListener('click', () => {
-    document.querySelector('#left_side_box').style.display = "block";
-})
-
         document.querySelector('#userDetailsBtn').addEventListener('mouseover', () => {
             document.querySelector('#userDetailsCont').style.display = 'block';
         })

@@ -14,16 +14,44 @@ function getCookie(name) {
 }
 const loggedusername = getCookie("prattleuser");
 
+  const isMobileView = () => window.innerWidth < 640;
+
+  function openChat(user) {
+    if (isMobileView()) {
+      document.getElementById("left_side_box").style.display = "none";
+      document.getElementById("right_side_box").style.display = "block";
+
+      history.pushState({ chatOpen: true }, null, location.href);
+    }
+  }
+
+  function showLeftSideBox() {
+    document.getElementById("left_side_box").style.display = "block";
+    document.getElementById("right_side_box").style.display = "none";
+  }
+
+  window.addEventListener("popstate", function (event) {
+    if (isMobileView()) {
+      showLeftSideBox();
+      history.pushState(null, null, location.href);
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    if (isMobileView()) {
+      document.getElementById("right_side_box").style.display = "none";
+      document.getElementById("left_side_box").style.display = "block";
+    }
+
+    const followers = document.querySelectorAll(".followerlist");
+    followers.forEach(f => {
+      f.addEventListener("click", function () {
+        openChat(this.dataset.username);
+      });
+    });
+  });
+
 $(document).ready(() => {
-    // open and close functionality of follower list
-document.querySelector('#openFollowerList').addEventListener('click', () => {
-    document.querySelector('#left_side_box').style.display = "block";
-})
-
-document.querySelector('#closeFollowerList').addEventListener('click', () => {
-    document.querySelector('#left_side_box').style.display = "none";
-})
-
     socket.emit("registerUser", loggedusername);
 
     $(".followerlist").on("click", (e) => {
