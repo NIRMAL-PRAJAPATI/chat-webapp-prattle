@@ -58,7 +58,7 @@
                     </div>
                     <div class="text-gray-400 mt-5 md:mt-1 lg:mt-5">
                         <i id="find_btn" class="fa-solid fa-users-viewfinder p-1 rounded hover:text-white"
-                            onclick="window.location.reload();" data-page="chatboard"></i>
+                            data-page="chatboard"></i>
                         <i id="search_btn" class="fa-solid fa-magnifying-glass p-1 rounded hover:text-white"></i>
                         <i id="logoutbtn" class="fa-solid fa-right-from-bracket p-1 rounded hover:text-white"
                             title="Logout"></i>
@@ -157,6 +157,15 @@
         </div>
     </div>
 
+    <script>
+        // Handle find button click to show right side box
+        document.getElementById('find_btn').addEventListener('click', function() {
+            document.getElementById('right_side_box').style.display = 'block';
+            if (window.innerWidth <= 768) {
+                document.getElementById('left_side_box').style.display = 'none';
+            }
+        });
+    </script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js"></script>
