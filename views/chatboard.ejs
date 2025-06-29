@@ -39,7 +39,7 @@
                             class="w-11 h-11 rounded-full mr-3 border border-gray-600">
                         <% } %>
                             <div>
-                                <h2 id="takerusername" class="md:text-2xl -mt-1 font-bold tracking-wide">
+                                <h2 id="takerusername" class="md:text-2xl md:-mt-1 font-bold tracking-wide">
                                     <%= user2 %>
                                 </h2>
                                 <div id="userStatusDiv">
@@ -60,9 +60,9 @@
                 <div id="userDetailsCont"
                     class="absolute py-2 px-3 bg-gray-700 rounded text-gray-300 w-[300px] right-0 m-2 mt-7 text-[12px] tracking-wider hidden">
                     <p class="mb-1">Prattle userID: <span class="text-sm text-green-500 font-bold">
-                            <%= userDetails.id %>
+                            PR<%= userDetails.id %>TL2<%= userDetails.id %>
                         </span></p>
-                    <p class="mb-1">Joining Date: <span class="text-sm text-green-500 font-bold">
+                    <p class="mb-1">Joining Date: <span class="text-sm text-green-500 font-bold" id="joiningDate">
                             <%= userDetails.joining_date %>
                         </span></p>
                     <p class="mb-1">
@@ -87,9 +87,9 @@
                     <span class="h-1 w-1 bg-blue-500 rounded-full animate-pulse delay-300"></span>
                 </span>
             </p>
-            <form id="sendChatInput" class="flex items-center">
-                <input id="inputMessage" type="text" placeholder="Type a message..."
-                    class="flex-1 border border-gray-600 text-white bg-gray-800 rounded py-2 px-4 outline-none focus:border-white">
+            <form id="sendChatInput" class="flex items-end">
+                <textarea id="inputMessage" placeholder="Type a message..." rows="1"
+                    class="flex-1 border border-gray-600 text-white bg-gray-800 rounded py-2 px-4 outline-none focus:border-white resize-none max-h-32 min-h-[40px]"></textarea>
                 <button
                     class="ml-2 bg-green-700 text-white rounded px-4 py-2 hover:bg-green-600 outline-none focus:ring-blue-500">Send</button>
             </form>
@@ -100,6 +100,19 @@
     <!-- <script src="../js/chat_board.js"></script> -->
 
     <script>
+        // Format joining date to required format
+        function formatJoiningDate(dateString) {
+            const date = new Date(dateString);
+            const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const weekday = weekdays[date.getUTCDay()];
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const year = date.getUTCFullYear();
+            return `${weekday}, ${day}/${month}/${year}`;
+        }
+        // Format and display joining date
+        document.getElementById('joiningDate').textContent = formatJoiningDate('<%= userDetails.joining_date %>');
+        
         document.querySelector('#userDetailsBtn').addEventListener('mouseover', () => {
             document.querySelector('#userDetailsCont').style.display = 'block';
         })
@@ -111,6 +124,20 @@
         document.querySelector('#eraseChat').addEventListener('click', () => {
             document.querySelector('#chatBox').innerHTML = "";
         })
+        
+        // Auto-expand textarea
+        document.querySelector('#inputMessage').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 128) + 'px';
+        });
+        
+        // Handle Enter key for sending messages
+        document.querySelector('#inputMessage').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.querySelector('#sendChatInput').dispatchEvent(new Event('submit'));
+            }
+        });
 
         // Function to leave the current room
         function leaveChatRoom() {
@@ -120,13 +147,21 @@
         // Handle user status update
         socket.on("userStatus", (data) => {
             const { username, status } = data;
-
-            if (status === "online") {
-                document.querySelector('#userStatusDiv').innerHTML = `<p class="text-sm text-green-600 tracking-wide">Online</p>`;
-            } else {
-                document.querySelector('#userStatusDiv').innerHTML = `<p class="text-sm text-gray-600 tracking-wide">Offline</p>`;
+            
+            // Only update status if it's for the current chat user
+            if (username === "<%= user2 %>" && "<%= user2 %>" !== "Prattle AI") {
+                if (status === "online") {
+                    document.querySelector('#userStatusDiv').innerHTML = `<p class="text-sm text-green-600 tracking-wide">Online</p>`;
+                } else {
+                    document.querySelector('#userStatusDiv').innerHTML = `<p class="text-sm text-gray-600 tracking-wide">Offline</p>`;
+                }
             }
         });
+        
+        // Request status for current user
+        if ("<%= user2 %>" !== "Prattle AI") {
+            socket.emit("getUserStatus", "<%= user2 %>");
+        }
 
         // Emit start private chat event
         socket.emit("startPrivateChat", { user1: "<%= user1 %>", user2: "<%= user2 %>" });
