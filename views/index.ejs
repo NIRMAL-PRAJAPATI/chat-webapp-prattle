@@ -30,31 +30,31 @@
             <h1 class="text-white text-5xl font-bold tracking-wide">Communicate with others<span class="bg-blue-600"> anonymously</span></h1>
             <p class="text-gray-500 mt-4">Prattle is a secure platform that allows users to chat anonymously without compromising their privacy or sharing any personal information. It fosters open and private communication, ensuring users can connect freely and safely with others.</p>
         </div>
-    <div class="max-w-md w-full space-y-8 p-10 bg-gray-900 rounded-xl shadow-lg">
+    <div class="max-w-md w-full space-y-10 sm:space-y-8 p-6 sm:p-10 bg-gray-900 sm:rounded-xl shadow-lg">
         <div class="text-center">
             <h2 class="mt-2 text-3xl font-extrabold text-gray-200">
-                Login to your account
+                Login your account
             </h2>
         </div>
-        <form id="formsubmit" class="mt-8 space-y-6 text-sm" action="submit" method="POST">
+        <form id="formsubmit" class="mt-8 space-y-6" action="submit" method="POST">
             <div class="rounded-md shadow-sm -space-y-px">
                 <p id="errormsg" class="text-red-500 -mt-3"><%= loginerrmsg %></p>
                 <div class="pt-2">
                     <label for="user_id" class="sr-only">User Name</label>
-                    <input id="username" name="username" type="text" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white tracking-wide rounded-t-md rounded-b-md focus:outline-none focus:border-green-500 focus:z-10 sm:text-sm lowercase" placeholder="Username" value="<%= username %>">
+                    <input id="username" name="username" type="text" required class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-700 bg-gray-800 text-white tracking-wide focus:outline-none focus:border-green-500 focus:z-10 sm:text-sm lowercase" placeholder="Username" value="<%= username %>">
                 </div><br>
                 <div>
                     <label for="password" class="sr-only">Password</label>
-                    <input id="password" name="password" type="password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 placeholder-gray-500 text-white tracking-wide rounded-t-md focus:outline-none focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Password" value="<%= password %>">
+                    <input id="password" name="password" type="password" required class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-700 bg-gray-800 placeholder-gray-500 text-white tracking-wide rounded-t-md focus:outline-none focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Password" value="<%= password %>">
                 </div>
                 <div>
                     <label for="password" class="sr-only">Confirm Password</label>
-                    <input id="conpassword" name="conpassword" type="password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border bg-gray-800 border-gray-700 placeholder-gray-500 text-white tracking-wide rounded-b-md focus:outline-none focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Confirm Password" value="<%= password %>">
+                    <input id="conpassword" name="conpassword" type="password" required class="appearance-none rounded-none relative block w-full px-3 py-3 border bg-gray-800 border-gray-700 placeholder-gray-500 text-white tracking-wide rounded-b-md focus:outline-none focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Confirm Password" value="<%= password %>">
                 </div>
             </div>
 
             <div>
-                <button id="formbtn" type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-700 focus:outline-none hover:bg-blue-700">Chat Now</button>
+                <button id="formbtn" type="submit" class="group relative w-full flex justify-center py-3 px-4 tracking-wider border border-transparent font-medium rounded-md text-white bg-green-700 focus:outline-none hover:bg-blue-700">Chat Now</button>
             </div>
         </form>
         <div class="mt-10 text-gray-600 text-sm">NOTE: Enter username and password to login, if entered username not exist then prattle creates your new account with entered username and password.</div>
