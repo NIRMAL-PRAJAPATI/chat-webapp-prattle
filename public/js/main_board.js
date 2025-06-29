@@ -134,7 +134,6 @@ document.querySelector('#globalSearchBtn').addEventListener('click', async () =>
     let username = document.getElementById("searchInput").value.trim();
 
     if (username.length < 1) {
-        console.log("increase input length")
         return;
     }
 
@@ -161,7 +160,6 @@ document.querySelector('#globalSearchBtn').addEventListener('click', async () =>
                 }
             })
         } else {
-            console.log("user not available");
             globalSearchCont.innerHTML = `<p class="text-gray-200">No username available!</p>`;
         }
     } catch (error) {
@@ -184,12 +182,3 @@ const followerSearch = () => {
             }
     })
 }
-
-// filter Button Functionality
-document.querySelector('#openFilterBtn').addEventListener('click', () => {
-    document.querySelector('#filterCont').style.display = "flex";
-})
-
-document.querySelector('#closeFilterBtn').addEventListener('click', () => {
-    document.querySelector('#filterCont').style.display = "none";
-})
