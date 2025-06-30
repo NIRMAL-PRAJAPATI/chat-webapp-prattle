@@ -3,9 +3,11 @@ const mainboardquery = require('../query/mainboard_query');
 
 const controller1 = async(req, res) => {
     datatable.query(mainboardquery.query2, [req.cookies.prattleuser], (error1, result1) => {
+        try {
         if (result1) {
             datatable.query(mainboardquery.query1, [req.cookies.prattleuser], (error2, result2) => {
-                if (result2) {
+                if (result2 && result1.rows[0]) {
+                    console.log(result1)
                     res.render('main_board', { users: result2.rows, loggeduserfollowing: result1.rows[0].followed_user, username: req.cookies.prattleuser });
                 } else {
                     console.log(error2);
@@ -15,6 +17,10 @@ const controller1 = async(req, res) => {
         } else {
             res.status(500).render('error', { errorCode: 500, errorHeading: "Data Fetch Error !", errorDescription: "Due to internal server error, account data not being fetched, try again after sometimes." });
         }
+    } catch(e) {
+        console.log(e);
+        res.status(500).render('error', { errorCode: 500, errorHeading: "Data Fetch Error !", errorDescription: "Due to internal server error, account data not being fetched, try again after sometimes." });
+    }
     })
 }
 
