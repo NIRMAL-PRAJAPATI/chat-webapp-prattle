@@ -4,23 +4,24 @@ const loginquery = require('../query/loginuser_query');
 
 const controller1 = async (req, res) => {
     const { username, password } = req.body;
+    const lowercaseUsername = username.toLowerCase();
 
     try {
-        const result1 = await datatable.query(loginquery.query1, [username]);
+        const result1 = await datatable.query(loginquery.query1, [lowercaseUsername]);
         
         if (result1.rows.length) {
             const isMatch = await bcrypt.compare(password, result1.rows[0].password);
             
             if (isMatch) {
-                res.cookie('prattleuser', username);
+                res.cookie('prattleuser', lowercaseUsername);
                 res.redirect('/mainboard');
             } else {
-                res.render('index', { loginerrmsg: "User exist, password is wrong !", username, password: "", showdiv: "hidden" });
+                res.render('index', { loginerrmsg: "User exist, password is wrong !", username: lowercaseUsername, password: "", showdiv: "hidden" });
             }
         } else {
-            req.session.username = username;
+            req.session.username = lowercaseUsername;
             req.session.password = password;
-            res.render('index', { loginerrmsg: "", username, password, showdiv: "flex" });
+            res.render('index', { loginerrmsg: "", username: lowercaseUsername, password, showdiv: "flex" });
         }
     } catch (error) {
         res.send("Something went wrong! " + error);
