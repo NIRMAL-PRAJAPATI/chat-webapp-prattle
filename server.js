@@ -1,3 +1,5 @@
+require('dotenv').config({ path: './.env' });
+
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const path = require('path');
@@ -11,9 +13,7 @@ const port = 4000;
 const socketServer = http.createServer(app);
 const io = new Server(socketServer);
 
-
-const API_KEY = "AIzaSyC9mrBsPgzA2J7la-PROx52OqiHIYytk3Q";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${'AIzaSyC9mrBsPgzA2J7la-PROx52OqiHIYytk3Q'}`;
 
 const users = {};
 const rooms = {};
@@ -95,7 +95,9 @@ io.on("connection", (socket) => {
 
         try {
             const response = await axios.post(GEMINI_URL, {
-                contents: [{ role: "user", parts: [{ text: message }] }]
+                contents: [{
+                    parts: [{ text: message }]
+                }]
             });
             
 

@@ -14,14 +14,19 @@
 const { Pool } = require('pg');
 
 const data = new Pool({
-  connectionString: "postgresql://chat%20webapp_owner:npg_WgNcrT1zZB3d@ep-autumn-king-a5uevppq-pooler.us-east-2.aws.neon.tech/chat%20webapp?sslmode=require",
+  connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false,
   }
 });
 
-data.connect()
-  .then(() => console.log("Connected to Neon PostgreSQL!"))
-  .catch(err => console.error("Connection error", err));
+data.on('connect', () => {
+  console.log('Connected to Neon PostgreSQL via data!');
+});
+
+data.on('error', (err) => {
+  console.error('Unexpected error on idle client', err);
+  process.exit(-1);
+});
 
 module.exports = data;
