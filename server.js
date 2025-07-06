@@ -7,6 +7,14 @@ const { Server } = require('socket.io')
 const http = require('http');
 const axios = require("axios");
 
+// Rate limiting
+const rateLimit = require('express-rate-limit');
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.'
+});
+
 const app = express();
 const port = 4000;
 
@@ -123,6 +131,7 @@ const sessioncreate = require('./src/middleware/confirmationbox');
 
 app.set('view engine', 'ejs');
 
+app.use(limiter);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(cookieParser('prattle'));
@@ -130,6 +139,17 @@ app.use(express.urlencoded({extended: true}));
 
 // Add session middleware
 app.use(sessioncreate);
+
+// Auto-restart on uncaught exceptions
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+    setTimeout(() => process.exit(1), 1000);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    setTimeout(() => process.exit(1), 1000);
+});
 
 socketServer.listen(port, () => console.log(`Server running on http://localhost:${port}`));
 
