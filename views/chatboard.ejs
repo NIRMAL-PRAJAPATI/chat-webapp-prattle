@@ -4,9 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Responsive Cards</title>
+    <title>Chat with <%= user2 %> | Prattle</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Shared Prattle surface: matches the conversation-list background. */
+        .whatsapp-bg {
+            background-color: #111827;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
         @media (max-width: 768px) {
             .chat-input-container {
                 position: fixed !important;
@@ -20,32 +28,87 @@
                 padding-bottom: 120px !important;
             }
         }
+
+        /* Custom scrollbar for emoji picker and chat */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(134, 150, 160, 0.3);
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(134, 150, 160, 0.5);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Message Bubble Tail */
+        .message-sent {
+            background-color: #005c4b;
+            border-radius: 12px 12px 2px 12px;
+        }
+
+        .message-received {
+            background-color: #1f2937;
+            border-radius: 12px 12px 12px 2px;
+        }
+
+        /* WhatsApp Input Transition */
+        #inputMessage {
+            transition: height 0.08s ease-out;
+        }
     </style>
 </head>
 
-<body>
-    <!-- sent Massage sound -->
+<body class="bg-gray-900">
+    <!-- sent Message sound -->
     <audio id="recieveMessageAudio">
         <source src="../img/recieveMessage.mp3" type="audio/mp3">
     </audio>
 
     <div class="grid grid-rows-[auto,1fr,auto] h-screen bg-gray-900 text-white">
-        <div class="flex px-3 py-2 mx-0 text-white border-b border-gray-800 justify-between">
-            <div class="flex">
+        <!-- WhatsApp Header Bar -->
+        <div
+            class="flex px-3 py-2.5 mx-0 text-white bg-gray-900 border-b border-gray-700 justify-between items-center z-10 shadow-sm">
+            <div class="flex items-center gap-3">
                 <% if(user2=="Prattle AI" ) { %>
-                    <img src="../img/logo 1.png" alt="Person 1" class="w-11 h-11 mr-1 p-[7px]">
+                    <div class="relative">
+                        <img src="../img/logo 1.png" alt="Prattle AI"
+                            class="w-10 h-10 p-1 bg-gray-800 rounded-full border border-gray-700">
+                        <span
+                            class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-gray-900"></span>
+                    </div>
                     <% } else { %>
-                        <img src="../img/profile.png" alt="Person 1"
-                            class="w-11 h-11 rounded-full mr-3 border border-gray-600">
+                        <div class="relative">
+                            <img src="../img/profile.png" alt="<%= user2 %>"
+                                class="w-10 h-10 rounded-full border border-gray-600 object-cover">
+                            <span id="userStatusDot"
+                                class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-gray-500 rounded-full border-2 border-gray-900"></span>
+                        </div>
                         <% } %>
                             <div>
-                                <h2 id="takerusername" class="md:text-2xl md:-mt-1 font-bold tracking-wide">
+                                <h2 id="takerusername"
+                                    class="text-base sm:text-lg font-semibold tracking-wide text-gray-100">
                                     <%= user2 %>
                                 </h2>
                                 <div id="userStatusDiv">
-                                    <p class="text-xs md:text-sm text-gray-600 tracking-wide">
+                                    <p class="text-xs text-gray-400">
                                         <% if(user2=="Prattle AI" ) { %>
-                                            AI ChatBot to help you
+                                            <span class="text-emerald-400">AI Assistant</span>
                                             <% } else { %>
                                                 Offline
                                                 <% } %>
@@ -53,241 +116,339 @@
                                 </div>
                             </div>
             </div>
-            <div class="flex pt-3 px-1 gap-4">
-                <i id="eraseChat" class="fa-solid fa-eraser text-gray-400 hover:text-white text-xl" title="Erase Chat"></i>
-                <i class="fa-solid fa-user-slash text-gray-400 hover:text-white mt-1"></i>
-                <i id="userDetailsBtn" class="fa-solid fa-circle-info text-gray-400 hover:text-white text-xl"></i>
+            <div class="flex pt-1 px-1 gap-4 items-center">
+                <i id="eraseChat"
+                    class="fa-solid fa-eraser text-gray-400 hover:text-white text-lg cursor-pointer transition-colors"
+                    title="Erase Chat"></i>
+                <i
+                    class="fa-solid fa-user-slash text-gray-400 hover:text-white text-lg cursor-pointer transition-colors"></i>
+                <i id="userDetailsBtn"
+                    class="fa-solid fa-circle-info text-gray-400 hover:text-white text-lg cursor-pointer transition-colors"></i>
                 <div id="userDetailsCont"
-                    class="absolute py-2 px-3 bg-gray-700 rounded text-gray-300 w-[300px] right-0 m-2 mt-7 text-[12px] tracking-wider hidden">
-                    <p class="mb-1">Prattle userID: <span class="text-sm text-green-500 font-bold">
+                    class="absolute py-2 px-3 bg-gray-900 rounded-lg text-gray-300 w-[290px] right-0 m-2 mt-8 text-[12px] tracking-wider hidden z-50 shadow-2xl border border-gray-700">
+                    <p class="mb-1 text-gray-400">Prattle User ID: <span class="text-xs text-emerald-400 font-bold">
                             PR<%= userDetails.id %>TL2<%= userDetails.id %>
                         </span></p>
-                    <p class="mb-1">Joining Date: <span class="text-sm text-green-500 font-bold" id="joiningDate">
+                    <p class="mb-1 text-gray-400">Joined: <span class="text-xs text-emerald-400 font-medium"
+                            id="joiningDate">
                             <%= userDetails.joining_date %>
                         </span></p>
-                    <p class="mb-1">
-                        <%= userDetails.username %> have <span class="text-sm text-green-500 font-bold">
-                                <%= userDetails.followed_user.length %>
-                            </span> prattle friends
+                    <p class="mb-1 text-gray-400">
+                        <%= userDetails.username %> has <span class="text-xs text-emerald-400 font-bold">
+                                <%= userDetails.followed_user ? userDetails.followed_user.length : 0 %>
+                            </span> friends
                     </p>
                 </div>
             </div>
         </div>
 
-        <div id="chatBox" class="overflow-y-auto p-4 space-y-2 chat-container">
-            <!-- here is the chatbox where all messages are loaded -->
+        <!-- Chat Messages Area (WhatsApp wallpaper) -->
+        <div id="chatBox" class="overflow-y-auto p-3 sm:p-4 space-y-2 chat-container custom-scrollbar whatsapp-bg">
+            <!-- Messages rendered here -->
         </div>
 
-        <div class="bg-gray-900 p-3 chat-input-container">
-            <p id="thinkLoading" class="hidden mt-8 font-medium text-gray-400 tracking-wide animate-pulse delay-50">
-                PrattleAI is Thinking
-                <span class="ml-2 mt-3 flex space-x-1">
-                    <span class="h-1 w-1 bg-blue-500 rounded-full animate-pulse"></span>
-                    <span class="h-1 w-1 bg-blue-500 rounded-full animate-pulse delay-150"></span>
-                    <span class="h-1 w-1 bg-blue-500 rounded-full animate-pulse delay-300"></span>
+        <!-- WhatsApp Bottom Input Section -->
+        <div class="bg-gray-900 p-2 sm:p-2.5 chat-input-container relative border-t border-gray-700">
+            <!-- Emoji Picker Container Popover -->
+            <div id="emojiPickerContainer"
+                class="hidden opacity-0 scale-95 pointer-events-none absolute bottom-16 left-2 sm:left-4 z-50 bg-gray-900/98 backdrop-blur-xl border border-gray-700 shadow-2xl rounded-2xl w-[94vw] sm:w-[360px] max-h-[400px] flex flex-col transition-all duration-150 ease-out">
+            </div>
+
+            <p id="thinkLoading"
+                class="hidden my-1.5 font-medium text-emerald-400 text-xs tracking-wide animate-pulse delay-50 items-center">
+                PrattleAI is Typing
+                <span class="ml-2 flex space-x-1">
+                    <span class="h-1.5 w-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                    <span class="h-1.5 w-1.5 bg-emerald-500 rounded-full animate-pulse delay-150"></span>
+                    <span class="h-1.5 w-1.5 bg-emerald-500 rounded-full animate-pulse delay-300"></span>
                 </span>
             </p>
-            <form id="sendChatInput" class="flex items-end">
-                <textarea id="inputMessage" placeholder="Type a message..." rows="1"
-                    class="flex-1 border border-gray-600 text-white bg-gray-800 rounded py-2 px-4 outline-none focus:border-white resize-none max-h-32 min-h-[40px]"></textarea>
-                <button
-                    class="ml-2 bg-green-700 text-white rounded px-4 py-2 hover:bg-green-600 outline-none focus:ring-blue-500">Send</button>
+
+            <!-- WhatsApp Input Form with onsubmit preventDefault -->
+            <form id="sendChatInput" onsubmit="return false;" class="flex items-end gap-2 relative w-full">
+                <!-- WhatsApp Input Pill Capsule -->
+                <div id="inputPill"
+                    class="flex-1 bg-gray-800 rounded-[24px] sm:rounded-[26px] px-2.5 sm:px-3 py-1 flex items-end gap-1.5 sm:gap-2 shadow-sm min-h-[44px] transition-all duration-100 focus-within:ring-1 focus-within:ring-gray-600/40">
+                    <!-- Left Emoji Button inside Pill -->
+                    <button type="button" id="emojiToggleBtn"
+                        class="h-[34px] w-[34px] rounded-full hover:bg-gray-700/60 flex items-center justify-center text-gray-400 hover:text-gray-200 transition-colors flex-shrink-0 mb-0.5 focus:outline-none active:scale-95"
+                        title="Emoji">
+                        <i class="fa-regular fa-face-smile text-xl mt-1"></i>
+                    </button>
+
+                    <!-- Textarea in Pill (WhatsApp auto-expanding movement) -->
+                    <textarea id="inputMessage" placeholder="Type a message" rows="1"
+                        class="flex-1 bg-transparent text-gray-100 placeholder:text-gray-400 text-[15px] sm:text-[16px] outline-none resize-none border-0 p-0 py-2 leading-[20px] max-h-[130px] min-h-[25px] custom-scrollbar"></textarea>
+                </div>
+
+                <!-- Dedicated WhatsApp Circular Floating Send Button -->
+                <button type="button" id="sendChatBtn"
+                    class="h-[44px] w-[44px] sm:h-[46px] sm:w-[46px] rounded-full bg-[#00a884] hover:bg-[#02906f] active:scale-90 text-white flex items-center justify-center shadow-lg transition-all duration-150 flex-shrink-0 cursor-pointer mb-0.5 focus:outline-none"
+                    title="Send">
+                    <i class="fa-solid fa-paper-plane text-lg text-white transition-transform duration-150"></i>
+                </button>
             </form>
         </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <!-- <script src="../js/chat_board.js"></script> -->
+    <script src="/js/emoji_picker.js"></script>
 
     <script>
-        // Format joining date to required format
-        function formatJoiningDate(dateString) {
-            const date = new Date(dateString);
-            const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const weekday = weekdays[date.getUTCDay()];
-            const day = String(date.getUTCDate()).padStart(2, '0');
-            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-            const year = date.getUTCFullYear();
-            return `${weekday}, ${day}/${month}/${year}`;
-        }
-        // Format and display joining date
-        document.getElementById('joiningDate').textContent = formatJoiningDate('<%= userDetails.joining_date %>');
-        
-        document.querySelector('#userDetailsBtn').addEventListener('mouseover', () => {
-            document.querySelector('#userDetailsCont').style.display = 'block';
-        })
+        (function () {
+            'use strict';
 
-        document.querySelector('#userDetailsBtn').addEventListener('mouseout', () => {
-            document.querySelector('#userDetailsCont').style.display = 'none';
-        })
+            // Use existing socket or initialize new one
+            const chatSocket = (typeof window.socket !== 'undefined') ? window.socket : io();
+            const currentRoomId = "<%= roomId %>";
+            const user1 = "<%= user1 %>";
+            const user2 = "<%= user2 %>";
 
-        document.querySelector('#eraseChat').addEventListener('click', () => {
-            document.querySelector('#chatBox').innerHTML = "";
-        })
-        
-        // Auto-expand textarea
-        document.querySelector('#inputMessage').addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 128) + 'px';
-        });
-        
-        // Handle Enter key for sending messages
-        document.querySelector('#inputMessage').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                document.querySelector('#sendChatInput').dispatchEvent(new Event('submit'));
+            // Initialize Emoji Picker
+            let prattleEmoji = null;
+            if (window.PrattleEmojiPicker) {
+                prattleEmoji = new window.PrattleEmojiPicker({
+                    containerId: 'emojiPickerContainer',
+                    toggleBtnId: 'emojiToggleBtn',
+                    inputId: 'inputMessage'
+                });
             }
-        });
 
-        // Function to leave the current room
-        function leaveChatRoom() {
-            socket.emit("leaveRoom", "<%= roomId %>");
-        }
+            const inputMessageEl = document.querySelector('#inputMessage');
+            const sendChatBtn = document.querySelector('#sendChatBtn');
+            const sendChatInput = document.querySelector('#sendChatInput');
+            const chatBox = document.querySelector('#chatBox');
 
-        // Handle user status update
-        socket.on("userStatus", (data) => {
-            const { username, status } = data;
-            
-            // Only update status if it's for the current chat user
-            if (username === "<%= user2 %>" && "<%= user2 %>" !== "Prattle AI") {
-                if (status === "online") {
-                    document.querySelector('#userStatusDiv').innerHTML = `<p class="text-sm text-green-600 tracking-wide">Online</p>`;
+            // WhatsApp-style dynamic textarea expansion
+            function updateWhatsAppInput() {
+                if (!inputMessageEl) return;
+                inputMessageEl.style.height = 'auto';
+                const newHeight = Math.min(inputMessageEl.scrollHeight, 130);
+                inputMessageEl.style.height = newHeight + 'px';
+                inputMessageEl.style.overflowY = inputMessageEl.scrollHeight > 130 ? 'auto' : 'hidden';
+            }
+
+            // Helper to escape HTML for safety while preserving emojis
+            function escapeHtmlMsg(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // Helper to format time (e.g. 10:24 PM)
+            function getCurrentTime() {
+                return new Date().toLocaleTimeString("en-US", {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true,
+                });
+            }
+
+            // Primary send function called by both Enter key and Send button click
+            async function handleSendMessage() {
+                if (!inputMessageEl) return;
+                const message = inputMessageEl.value.trim();
+                if (message.length === 0) return;
+
+                if (prattleEmoji && prattleEmoji.isOpen) {
+                    prattleEmoji.close();
+                }
+
+                if (currentRoomId !== "Prattle AI") {
+                    await chatSocket.emit("privateMessage", { roomId: currentRoomId, sender: user1, message });
+
+                    if (chatBox) {
+                        chatBox.innerHTML += `
+                            <div class="flex justify-end">
+                                <div class="message-sent text-white py-1.5 px-3 max-w-[85%] lg:max-w-[65%] shadow-sm">
+                                    <p class="text-[15px] sm:text-base break-words whitespace-pre-wrap leading-relaxed">${escapeHtmlMsg(message)}</p>
+                                    <div class="flex items-center justify-end gap-1 -mt-0.5 -mb-0.5">
+                                        <span class="text-[10px] text-gray-300/80">${getCurrentTime()}</span>
+                                    </div>
+                                </div>
+                            </div>`;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
                 } else {
-                    document.querySelector('#userStatusDiv').innerHTML = `<p class="text-sm text-gray-600 tracking-wide">Offline</p>`;
+                    const think = document.querySelector('#thinkLoading');
+                    if (think) {
+                        think.style.display = "flex";
+                        think.classList.remove("hidden");
+                    }
+
+                    chatSocket.emit("chatbot_request", message);
+
+                    if (chatBox) {
+                        chatBox.innerHTML += `
+                            <div class="flex justify-end">
+                                <div class="message-sent text-white py-1.5 px-3 max-w-[85%] lg:max-w-[65%] shadow-sm">
+                                    <p class="text-[15px] sm:text-base break-words whitespace-pre-wrap leading-relaxed">${escapeHtmlMsg(message)}</p>
+                                    <div class="flex items-center justify-end gap-1 -mt-0.5 -mb-0.5">
+                                        <span class="text-[10px] text-gray-300/80">${getCurrentTime()}</span>
+                                    </div>
+                                </div>
+                            </div>`;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
                 }
+
+                inputMessageEl.value = "";
+                inputMessageEl.style.height = 'auto';
+                updateWhatsAppInput();
+                inputMessageEl.focus();
             }
-        });
-        
-        // Request status for current user
-        if ("<%= user2 %>" !== "Prattle AI") {
-            socket.emit("getUserStatus", "<%= user2 %>");
-        }
 
-        // Emit start private chat event
-        socket.emit("startPrivateChat", { user1: "<%= user1 %>", user2: "<%= user2 %>" });
+            if (inputMessageEl) {
+                inputMessageEl.addEventListener('input', updateWhatsAppInput);
 
-        if ("<%= roomId %>" != "Prattle AI") {
-            // Send a message
-            document.querySelector('#sendChatInput').addEventListener('submit', async (e) => {
-                e.preventDefault();
+                // Handle Enter key for sending messages (Shift+Enter for newline)
+                inputMessageEl.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleSendMessage();
+                        return false;
+                    }
+                });
+            }
 
-                let message = document.querySelector('#inputMessage').value.trim();
+            if (sendChatBtn) {
+                sendChatBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleSendMessage();
+                });
+            }
 
-                if (message.length > 0) {
-                    await socket.emit("privateMessage", { roomId: "<%= roomId %>", sender: "<%= user1 %>", message });
+            if (sendChatInput) {
+                sendChatInput.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleSendMessage();
+                    return false;
+                });
+            }
 
-                    // Display sent message in chatbox
-                    document.querySelector('#chatBox').innerHTML += `<div id="sendMessage" class="flex justify-end">
-            <div class="bg-gray-800 text-white rounded-md py-3 px-4 max-w-[85%] lg:max-w-[65%]">
-                <span class="flex justify-end text-green-600 text-[11px] whitespace-pre-wrap" style="margin: -5px -5px -2px 0px;">You</span>
-                <p class="text-[17px] md:text-md break-words whitespace-pre-wrap">${message}</p>
-                <span class="text-[11px] text-gray-500 flex mt-1 -mb-2 -ml-2">${(() => {
-                            return new Date().toLocaleTimeString("en-US", {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: true,
-                            });
-                        })()}</span>
-            </div>
-        </div>`;
+            // Format joining date
+            function formatJoiningDate(dateString) {
+                if (!dateString) return 'Recent';
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return dateString;
+                const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const weekday = weekdays[date.getUTCDay()];
+                const day = String(date.getUTCDate()).padStart(2, '0');
+                const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+                const year = date.getUTCFullYear();
+                return `${weekday}, ${day}/${month}/${year}`;
+            }
 
-                    document.querySelector('#inputMessage').value = "";
-                    document.querySelector('#inputMessage').style.height = 'auto';
+            const joiningDateEl = document.getElementById('joiningDate');
+            if (joiningDateEl) {
+                joiningDateEl.textContent = formatJoiningDate('<%= userDetails.joining_date %>');
+            }
 
-                    document.querySelector('#chatBox').scrollTop = document.querySelector('#chatBox').scrollHeight;
+            document.querySelector('#userDetailsBtn')?.addEventListener('mouseover', () => {
+                document.querySelector('#userDetailsCont').style.display = 'block';
+            });
+
+            document.querySelector('#userDetailsBtn')?.addEventListener('mouseout', () => {
+                document.querySelector('#userDetailsCont').style.display = 'none';
+            });
+
+            document.querySelector('#eraseChat')?.addEventListener('click', () => {
+                if (chatBox) chatBox.innerHTML = "";
+            });
+
+            // Handle user status update
+            chatSocket.off("userStatus");
+            chatSocket.on("userStatus", (data) => {
+                const { username, status } = data;
+
+                // Only update status if it's for the current chat user (case-insensitive)
+                if (username && username.toLowerCase() === user2.toLowerCase() && user2 !== "Prattle AI") {
+                    const statusDiv = document.querySelector('#userStatusDiv');
+                    const statusDot = document.querySelector('#userStatusDot');
+                    if (statusDiv) {
+                        if (status === "online") {
+                            statusDiv.innerHTML = `<p class="text-xs text-emerald-400 font-medium">online</p>`;
+                            if (statusDot) statusDot.className = "absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-gray-900";
+                        } else {
+                            statusDiv.innerHTML = `<p class="text-xs text-gray-400">offline</p>`;
+                            if (statusDot) statusDot.className = "absolute bottom-0 right-0 w-2.5 h-2.5 bg-gray-500 rounded-full border-2 border-gray-900";
+                        }
+                    }
                 }
             });
 
-            // Receive private message
-            socket.off("privateMessage");
-            socket.on("privateMessage", ({ sender, message }) => {
+            // Request status for current user
+            if (user2 !== "Prattle AI") {
+                chatSocket.emit("getUserStatus", user2);
+            }
 
-                if (message.length > 0) {
-                    document.querySelector('#chatBox').innerHTML += `<div id="recieveMessage" class="flex justify-start">
-            <div class="bg-gray-800 rounded-lg py-3 px-4 text-white max-w-[85%] lg:max-w-[65%]">
-                <span class="flex justify-start text-blue-600 text-[11px]" style="margin: -5px 0px 0px -5px;">${sender}</span>
-                <p class="text-[17px] md:text-md break-words whitespace-pre-wrap">${message}</p>
-                <span class="text-[11px] text-gray-500 justify-end flex mt-1 -mb-2 -mr-2">${(() => {
-                            return new Date().toLocaleTimeString("en-US", {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: true,
-                            });
-                        })()}</span>
-            </div>
-        </div>`;
-                    document.querySelector('#chatBox').scrollTop = document.querySelector('#chatBox').scrollHeight;
-                    document.querySelector('#recieveMessageAudio').play();
-                }
-            });
+            // Emit start private chat event
+            chatSocket.emit("startPrivateChat", { user1: user1, user2: user2 });
 
-            // Handle disconnection
-            socket.on("disconnect", () => {
-            });
+            if (currentRoomId !== "Prattle AI") {
+                // Receive private message
+                chatSocket.off("privateMessage");
+                chatSocket.on("privateMessage", ({ sender, message }) => {
+                    if (message && message.length > 0) {
+                        if (chatBox) {
+                            chatBox.innerHTML += `
+                                <div class="flex justify-start">
+                                    <div class="message-received text-white py-1.5 px-3 max-w-[85%] lg:max-w-[65%] shadow-sm">
+                                        <span class="flex justify-start text-[#53bdeb] text-[12px] font-semibold -mb-0.5">${escapeHtmlMsg(sender)}</span>
+                                        <p class="text-[15px] sm:text-base break-words whitespace-pre-wrap leading-relaxed">${escapeHtmlMsg(message)}</p>
+                                        <div class="flex items-center justify-end -mt-0.5 -mb-0.5">
+                                            <span class="text-[10px] text-gray-400">${getCurrentTime()}</span>
+                                        </div>
+                                    </div>
+                                </div>`;
+                            chatBox.scrollTop = chatBox.scrollHeight;
+                        }
 
-        } else {
-            // All the logic which is used to make AI chatbot is written here
-            // Send a message
-            document.querySelector('#sendChatInput').addEventListener('submit', async (e) => {
-                e.preventDefault();
+                        const audio = document.querySelector('#recieveMessageAudio');
+                        if (audio) {
+                            audio.currentTime = 0;
+                            audio.play().catch(() => { });
+                        }
+                    }
+                });
 
-                let message = document.querySelector('#inputMessage').value.trim();
+            } else {
+                // Receive chatbot message
+                chatSocket.off("chatbot_response");
+                chatSocket.on("chatbot_response", (message) => {
+                    if (message && message.length > 0) {
+                        if (chatBox) {
+                            chatBox.innerHTML += `
+                                <div class="flex justify-start">
+                                    <div class="message-received text-white py-1.5 px-3 max-w-[85%] lg:max-w-[65%] shadow-sm">
+                                        <span class="flex justify-start text-[#53bdeb] text-[12px] font-semibold -mb-0.5">Prattle AI</span>
+                                        <p class="whitespace-pre-wrap break-words leading-relaxed text-[15px] sm:text-base">${escapeHtmlMsg(message)}</p>
+                                        <div class="flex items-center justify-end -mt-0.5 -mb-0.5">
+                                            <span class="text-[10px] text-gray-400">${getCurrentTime()}</span>
+                                        </div>
+                                    </div>
+                                </div>`;
+                            chatBox.scrollTop = chatBox.scrollHeight;
+                        }
 
-                if (message.length > 0) {
-                    document.querySelector('#sendChatInput').classList.add("hidden");
-                    document.querySelector('#thinkLoading').style.display = "flex";
+                        const audio = document.querySelector('#recieveMessageAudio');
+                        if (audio) {
+                            audio.currentTime = 0;
+                            audio.play().catch(() => { });
+                        }
 
-                    socket.emit("chatbot_request", message);
-
-                    // Display sent message in chatbox
-                    document.querySelector('#chatBox').innerHTML += `<div id="sendMessage" class="flex justify-end">
-            <div class="bg-gray-800 text-white rounded-md py-3 px-4 max-w-[85%] lg:max-w-[65%]">
-                <span class="flex justify-end text-green-600 text-[11px] whitespace-pre-wrap" style="margin: -5px -5px -2px 0px;">You</span>
-                <p>${message}</p>
-                <span class="text-[11px] text-gray-500 flex mt-1 -ml-1">${(() => {
-                            return new Date().toLocaleTimeString("en-US", {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: true,
-                            });
-                        })()}</span>
-            </div>
-        </div>`;
-
-                    document.querySelector('#inputMessage').value = "";
-                    document.querySelector('#inputMessage').style.height = 'auto';
-
-                    document.querySelector('#chatBox').scrollTop = document.querySelector('#chatBox').scrollHeight;
-                }
-            });
-
-            // Receive chatbot message
-            socket.off("chatbot_response");
-            socket.on("chatbot_response", (message) => {
-
-                if (message.length > 0) {
-                    document.querySelector('#chatBox').innerHTML += `<div id="recieveMessage" class="flex justify-start">
-            <div class="bg-gray-800 rounded-lg py-3 px-4 text-white max-w-[85%] lg:max-w-[65%]">
-                <span class="flex justify-start text-blue-600 text-[11px]" style="margin: -5px 0px 0px -5px;">Prattle AI</span>
-                <p class="whitespace-pre-wrap break-words">${message}</p>
-                <span class="text-[11px] text-gray-500 justify-end flex mt-1 -mr-1">${(() => {
-                            return new Date().toLocaleTimeString("en-US", {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: true,
-                            });
-                        })()}</span>
-            </div>
-        </div>`;
-                    document.querySelector('#chatBox').scrollTop = document.querySelector('#chatBox').scrollHeight;
-                    document.querySelector('#recieveMessageAudio').play();
-
-                    document.querySelector('#thinkLoading').style.display = "none"
-                    document.querySelector('#sendChatInput').classList.remove("hidden");
-                }
-            });
-        }
-
+                        const think = document.querySelector('#thinkLoading');
+                        if (think) {
+                            think.style.display = "none";
+                            think.classList.add("hidden");
+                        }
+                    }
+                });
+            }
+        })();
     </script>
 </body>
 

@@ -1,16 +1,6 @@
-// const pool = require('pg').Pool;
+// BUG FIX: Ensure dotenv is loaded before accessing process.env
+require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 
-// const data = new pool({
-//     user: 'postgres',
-//     host: 'localhost',
-//     database: 'prattle',
-//     password: 'root',
-//     port: 5432,
-// });
-
-// module.exports = data;
-
-// new connection which is required to connect project to neon server
 const { Pool } = require('pg');
 
 const data = new Pool({
@@ -24,9 +14,12 @@ data.on('connect', () => {
   console.log('Connected to Neon PostgreSQL via data!');
 });
 
+// BUG FIX: Old code did process.exit(-1) which crashes the ENTIRE server
+// on transient network hiccups or Neon cold-start timeouts.
+// Now we log and let the pool recover on its own.
 data.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
-  process.exit(-1);
+  console.error('PostgreSQL pool idle client error:', err.message);
+  // Don't exit — the pool will create a new connection on the next query
 });
 
 module.exports = data;

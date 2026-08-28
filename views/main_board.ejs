@@ -17,82 +17,92 @@
             padding: 0;
         }
 
-        .searchbox_style {
-            width: 28%;
-        }
+        .app-shell { min-height: 100vh; }
+        .panel-scrollbar::-webkit-scrollbar { width: 5px; }
+        .panel-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .panel-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 999px; }
 
-        @media(max-width: 1100px) {
-            .searchbox_style {
-                width: 100%;
-            }
+        @media (max-width: 767px) {
+            html, body { overflow: auto; }
+            #left_side_box { min-height: 100vh; }
+            #right_side_box { display: none; min-height: 100vh; }
+            #searchCont1 { width: calc(100% - 2rem); }
         }
     </style>
 </head>
 
 <body class="bg-gray-900">
-    <div class="flex flex-col md:flex-row bg-gray-900">
+    <div class="app-shell flex flex-col md:flex-row bg-gray-900 text-white">
         <!-- Left side: Person list -->
         <div id="left_side_box"
-            class="h-[100vh] w-full md:w-[33%] bg-gray-900 text-white border-r border-gray-700 flex flex-col"
+            class="h-[100vh] w-full md:w-[360px] lg:w-[390px] flex-shrink-0 bg-gray-900 text-white border-r border-gray-700 flex flex-col"
             style="justify-content: space-between;">
             <!-- search box -->
-            <div id="searchbox" class="bg-gray-900 absolute p-2 w-[98%] md:max-w-[24%] left-[-200%]">
-                <div class="flex items-center mt-1">
-                    <input id="followerSearchInput" type="text" placeholder="Enter username"
-                        class="flex-1 border border-gray-500 bg-gray-800 rounded py-2 px-4 outline-none focus: text-white focus:border-gray-100 lowercase"
+            <div id="searchbox" class="bg-gray-900 absolute p-3 w-[98%] md:w-[360px] lg:w-[390px] left-[-200%] z-30 border-b border-gray-700 shadow-xl">
+                <div class="flex items-center gap-2 mt-1">
+                    <input id="followerSearchInput" type="text" placeholder="Search your chats"
+                        class="flex-1 border border-gray-600 bg-gray-800 rounded-xl py-2.5 px-4 outline-none text-white placeholder:text-gray-500 focus:border-emerald-500 lowercase"
                         onkeyup="followerSearch();">
                     <button
-                        class="ml-2 bg-green-700 text-white rounded px-4 py-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Search</button>
+                        class="bg-green-700 text-white rounded-xl px-4 py-2.5 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-emerald-500">Search</button>
                 </div>
                 <i
                     class="closesearch fa-solid fa-xmark text-xl absolute top-0 right-[-8px] bg-gray-900 rounded-full px-2"></i>
             </div>
             <div>
-                <div class="flex font-semibold px-2 border-b border-gray-800" style="justify-content: space-between;">
+                <div class="flex font-semibold px-4 py-3 border-b border-gray-800 items-center" style="justify-content: space-between;">
                     <div>
-                        <p class="tracking-wide text-[12px] flex text-blue-500 -ml-1"><img src="../img/logo 1.png"
-                                width="8" class="h-2 mt-[6px]">&nbsp;Prattle</p>
-                        <p class="ml-2 md:-ml-1 lg:ml-2 text-[21px] mb-3">
+                        <p class="tracking-wide text-[11px] flex items-center text-blue-500"><img src="../img/logo 1.png"
+                                width="12" class="h-3 mr-1">Prattle</p>
+                        <p class="text-[21px] leading-tight mt-1">
                             <%= username %>
                         </p>
                     </div>
-                    <div class="text-gray-400 mt-5 md:mt-1 lg:mt-5">
-                        <i id="find_btn" class="fa-solid fa-users-viewfinder p-1 rounded hover:text-white"
+                    <div class="text-gray-400 flex gap-1">
+                        <i id="find_btn" class="fa-solid fa-users-viewfinder p-2 rounded-lg hover:bg-gray-800 hover:text-white cursor-pointer"
                             data-page="chatboard"></i>
-                        <i id="search_btn" class="fa-solid fa-magnifying-glass p-1 rounded hover:text-white"></i>
-                        <i id="logoutbtn" class="fa-solid fa-right-from-bracket p-1 rounded hover:text-white"
+                        <i id="search_btn" class="fa-solid fa-magnifying-glass p-2 rounded-lg hover:bg-gray-800 hover:text-white cursor-pointer"></i>
+                        <i id="logoutbtn" class="fa-solid fa-right-from-bracket p-2 rounded-lg hover:bg-gray-800 hover:text-white cursor-pointer"
                             title="Logout"></i>
                     </div>
                 </div>
-                <ul id="followerList" class="overflow-y-scroll h-[90vh]">
+                <div class="px-4 py-3 border-b border-gray-800/80">
+                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Your conversations</p>
+                </div>
+                <ul id="followerList" class="panel-scrollbar overflow-y-auto h-[calc(100vh-117px)]">
                     <% if(loggeduserfollowing <=0) { %>
-                        <p class="mt-3 ml-3 text-gray-600">You doesn't have any
-                            follower to chat</p>
+                        <p class="mt-8 px-6 text-center text-sm leading-6 text-gray-500">No conversations yet. Find someone new and start a chat.</p>
                         <% } else { %>
                             <% loggeduserfollowing.forEach(follower=> { %>
-                                <li class="followerlist hover:bg-gray-800">
-                                    <div class="flex items-center py-3 mx-2 cursor-pointer border-b border-gray-800  overflow-x-hidden"
+                                <li class="followerlist hover:bg-gray-800 transition-colors">
+                                    <div class="flex items-center py-3 mx-2 cursor-pointer border-b border-gray-800 overflow-x-hidden"
                                         data-username="<%= follower %>">
                                         <% if(follower=="Prattle AI" ) { %>
-                                            <img src="../img/logo 1.png" alt="Person 1"
-                                                class="w-8 h-8 ml-1 mr-4 p-[3px] select-none">
-                                            <div>
-                                                <h3 class="font-medium tracking-wide text-gray-100">
+                                            <div class="relative flex-shrink-0">
+                                                <img src="../img/logo 1.png" alt="Prattle AI"
+                                                    class="w-9 h-9 ml-1 mr-3 p-[3px] select-none bg-gray-800 rounded-full border border-gray-700">
+                                                <span class="absolute bottom-0 right-3 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-gray-900"></span>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <h3 class="font-medium tracking-wide text-gray-100 truncate">
                                                     <%= follower %>
                                                 </h3>
-                                                <p class="text-sm text-gray-500 truncate opacity-70 select-none">
-                                                    <span class="font-bold">I am here to help you</span>
+                                                <p class="text-xs text-emerald-400/90 truncate select-none">
+                                                    AI Assistant
                                                 </p>
                                             </div>
                                             <% } else { %>
-                                                <img src="../img/profile.png" alt="Person 1"
-                                                    class="w-10 h-10 rounded-full mr-3 border border-gray-600 select-none">
-                                                <div>
-                                                    <h3 class="font-medium tracking-wide text-gray-100">
+                                                <div class="relative flex-shrink-0">
+                                                    <img src="../img/profile.png" alt="<%= follower %>"
+                                                        class="w-10 h-10 rounded-full mr-3 border border-gray-600 select-none object-cover">
+                                                    <span class="follower-status-dot absolute bottom-0 right-3 w-2.5 h-2.5 bg-gray-500 rounded-full border-2 border-gray-900 transition-colors"></span>
+                                                </div>
+                                                <div class="min-w-0">
+                                                    <h3 class="font-medium tracking-wide text-gray-100 truncate">
                                                         <%= follower %>
                                                     </h3>
-                                                    <p class="text-sm text-gray-500 truncate opacity-70 select-none">
-                                                        Now you can talk with <%= follower %>
+                                                    <p class="text-xs text-gray-400 truncate select-none follower-status-text">
+                                                        Offline
                                                     </p>
                                                 </div>
                                                 <% } %>
@@ -106,47 +116,51 @@
         </div>
 
         <!-- Right side: Chat box -->
-        <div id="right_side_box" class="w-full bg-gray-900 overflow-hidden border-t border-gray-800">
+        <div id="right_side_box" class="flex-1 min-w-0 bg-gray-900 overflow-hidden border-t md:border-t-0 border-gray-800">
             <!-- search box -->
-            <div class="flex items-center px-2 md:px-20 mt-4 w-100">
+            <div class="flex items-center px-4 sm:px-6 lg:px-10 pt-5 w-full">
                 <div class="flex w-full">
-                    <input type="text" id="searchInput" placeholder="Enter username to find prattle users worldwide"
-                        class="w-full border-b border-gray-500 bg-gray-800 rounded py-2 px-4 outline-none focus: text-white focus:border-gray-100 lowercase">
+                    <input type="text" id="searchInput" placeholder="Search Prattle users worldwide"
+                        class="w-full border border-gray-700 bg-gray-800 rounded-xl py-3 px-4 outline-none text-white placeholder:text-gray-500 focus:border-emerald-500 lowercase">
                     <!-- search result container -->
                     <div id="searchCont1"
-                        class="p-4 bg-gray-700 absolute w-[52%] max-h-[80vh] rounded hidden overflow-y-scroll mt-11">
+                        class="panel-scrollbar p-4 bg-gray-700 absolute w-[52%] max-h-[80vh] rounded-xl hidden overflow-y-auto mt-14 z-20 shadow-2xl border border-gray-600">
                         <i id="hideSearchCont"
                             class="fa-solid fa-xmark absolute right-0 -mt-3 mr-2 text-xl text-white"></i>
                         <ul id="globalSearchedUsername" class="space-y-2 mt-3">
                         </ul>
                     </div>
                     <button id="globalSearchBtn"
-                        class="ml-2 bg-green-700 text-white rounded px-4 py-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="ml-2 bg-green-700 text-white rounded-xl px-5 py-3 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         onclick="searchUser();">Search</button>
                 </div>
             </div>
 
-            <div class="h-[82vh] overflow-y-scroll">
-                <div class="container mx-auto px-4 mt-2">
-                    <h1 class="text-white tracking-wide text-xl ml-5 mb-1">Recommendation</h1>
-                    <ul class="space-y-2">
+            <div class="panel-scrollbar h-[calc(100vh-94px)] overflow-y-auto">
+                <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-10 py-8">
+                    <div class="mb-6">
+                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-500">Discover</p>
+                        <h1 class="text-white tracking-wide text-2xl font-semibold mt-1">People you may know</h1>
+                        <p class="text-gray-400 text-sm mt-1">Grow your circle and start a conversation.</p>
+                    </div>
+                    <ul class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                         <% users.forEach(user=> { %>
                             <li
-                                class="flex items-center justify-between bg-gray-800 border border-gray-700 px-4 py-1 rounded-sm shadow text-white">
-                                <div>
+                                class="flex items-center justify-between bg-gray-800 border border-gray-700 px-4 py-4 rounded-2xl shadow-sm text-white hover:border-gray-600 hover:bg-gray-800/80 transition-colors">
+                                <div class="min-w-0">
                                     <h2 class="text-md font-semibold tracking-wide">
                                         <%= user.username %>
                                     </h2>
-                                    <p class="text-gray-500 text-[11px] -mt-1">Tie-in
-                                        with <span class="font-bold text-md text-green-600">
+                                    <p class="text-gray-500 text-xs mt-1">Connected with
+                                        <span class="font-bold text-sm text-green-500">
                                             <%= user.followed_user.length %>
                                         </span> users</p>
                                 </div>
-                                <div>
-                                    <button class="py-2 px-3 rounded text-gray-400 hover:text-white"
+                                <div class="flex items-center ml-3">
+                                    <button class="h-9 w-9 rounded-full bg-gray-700 text-gray-300 hover:bg-green-700 hover:text-white transition-colors"
                                         onclick="checkfunc('<%= user.username %>')" title="Chat Now"><i
                                             class="fa-solid fa-comments"></i></button>
-                                    <i class="fa-solid fa-share-from-square ml-2 text-gray-400 hover:text-white"
+                                    <i class="fa-solid fa-share-from-square ml-2 p-2 text-gray-400 hover:text-white cursor-pointer"
                                         title="Share"></i>
                                 </div>
                             </li>
@@ -169,6 +183,9 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <!-- BUG FIX: Pass username from server to client. httpOnly cookies can't be read via document.cookie -->
+    <script>window.__PRATTLE_USER__ = "<%= username %>";</script>
+    <script src="/js/emoji_picker.js"></script>
     <script src="../js/main_board.js"></script>
 </body>
 
