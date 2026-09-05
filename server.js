@@ -2,6 +2,8 @@ require('dotenv').config({ path: './.env' });
 
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const cookie = require('cookie');
+const cookieSignature = require('cookie-signature');
 const path = require('path');
 const { Server } = require('socket.io')
 const http = require('http');
@@ -23,7 +25,29 @@ const io = new Server(socketServer);
 
 // Use env var instead of hardcoded key
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+// BUG FIX: gemini-1.5-flash was retired by Google — requests to it now fail regardless of API key validity.
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+// BUG FIX: Sockets had zero authentication — any client could call registerUser/startPrivateChat/
+// privateMessage with an arbitrary username and impersonate someone else or intercept their chat.
+// Verify the signed "prattleuser" cookie during the handshake and trust that identity only.
+function getAuthUsernameFromSocket(socket) {
+    const rawCookieHeader = socket.handshake.headers.cookie;
+    if (!rawCookieHeader) return null;
+
+    const parsed = cookie.parse(rawCookieHeader);
+    const raw = parsed.prattleuser;
+    if (!raw) return null;
+
+    try {
+        const decoded = decodeURIComponent(raw);
+        if (!decoded.startsWith('s:')) return null;
+        const unsigned = cookieSignature.unsign(decoded.slice(2), process.env.COOKIE_SECRET || 'prattle_secret_key_change_me');
+        return unsigned ? unsigned.toLowerCase() : null;
+    } catch (e) {
+        return null;
+    }
+}
 
 // BUG FIX: Track multiple sockets per user (multi-tab support)
 // Old code: users[username] = socket.id  (overwrites on second tab, breaks on disconnect)
@@ -34,10 +58,14 @@ const rooms = {};
 io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
 
+    // BUG FIX: Derive identity from the signed auth cookie, not from client-supplied data.
+    socket.authUsername = getAuthUsernameFromSocket(socket);
+
     // Register user
     socket.on("registerUser", (username) => {
-        if (!username || typeof username !== 'string') return;
-        const cleanName = username.trim().toLowerCase();
+        // BUG FIX: Ignore the client-supplied username — trust only the verified cookie identity,
+        // otherwise anyone could register (and appear online) as any other user.
+        const cleanName = socket.authUsername;
         if (!cleanName) return;
 
         // BUG FIX: Support multiple sockets per user
@@ -64,7 +92,9 @@ io.on("connection", (socket) => {
     });
 
     // Start private chat
-    socket.on("startPrivateChat", ({ user1, user2 }) => {
+    socket.on("startPrivateChat", ({ user2 }) => {
+        // BUG FIX: Use the verified cookie identity as user1 instead of trusting the client's claim.
+        const user1 = socket.authUsername;
         if (!user1 || !user2) return;
         const u2 = user2.trim().toLowerCase();
         const roomId = [user1, user2].sort().join("_chats_");
@@ -93,7 +123,10 @@ io.on("connection", (socket) => {
     });
 
     // Handle sending private messages
-    socket.on("privateMessage", async ({ roomId, sender, message }) => {
+    socket.on("privateMessage", async ({ roomId, message }) => {
+        // BUG FIX: Use the verified cookie identity as sender instead of trusting the client's claim,
+        // otherwise anyone could send messages that appear to come from another user.
+        const sender = socket.authUsername;
         if (!roomId || !sender || !message) return;
         // Send message to the room
         socket.to(roomId).emit("privateMessage", { sender, message });

@@ -2,6 +2,10 @@ const bcrypt = require('bcryptjs');
 const datatable = require('../db');
 const loginquery = require('../query/loginuser_query');
 
+// BUG FIX: Must match the client-side rule in public/js/form.js — that check is trivially
+// bypassed by posting to /submit directly, so weak passwords need to be rejected here too.
+const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
 const controller1 = async (req, res) => {
     const { username, password } = req.body;
 
@@ -40,6 +44,12 @@ const controller1 = async (req, res) => {
                 res.render('index', { loginerrmsg: "User exist, password is wrong !", username: lowercaseUsername, password: "", showdiv: "hidden" });
             }
         } else {
+            // BUG FIX: Enforce the same password strength rule the client already shows,
+            // so a direct POST to /submit can't create an account with a weak password.
+            if (!passwordPattern.test(password)) {
+                return res.render('index', { loginerrmsg: "Password must be at least 8 characters long, contain 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character!", username: lowercaseUsername, password: "", showdiv: "hidden" });
+            }
+
             req.session.username = lowercaseUsername;
             // BUG FIX: Hash the password before storing in session
             // Old code stored PLAINTEXT password in session: req.session.password = password

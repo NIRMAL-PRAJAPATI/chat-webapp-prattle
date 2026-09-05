@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
     <title>Chat with <%= user2 %> | Prattle</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,18 +15,24 @@
             background-size: 20px 20px;
         }
 
-        @media (max-width: 768px) {
-            .chat-input-container {
-                position: fixed !important;
-                bottom: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                z-index: 1000 !important;
-            }
+        /* BUG FIX: html/body must not scroll — only #chatBox should. A scrollable body is what let
+           mobile browsers "helpfully" scroll the whole page up when the keyboard opened, shoving the
+           header and messages off the top of the screen. */
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            margin: 0;
+        }
 
-            .chat-container {
-                padding-bottom: 120px !important;
-            }
+        /* BUG FIX: 100vh (Tailwind's h-screen) is measured once and does not shrink when the mobile
+           keyboard opens — most noticeable on iOS Safari — so the shell kept claiming the full
+           device height and the input bar (previously forced to position:fixed on mobile) ended up
+           floating over the header/messages instead of sitting above the keyboard. 100dvh tracks the
+           real visible viewport; the visualViewport JS below covers browsers that need extra help
+           keeping everything in view while the keyboard is open.  */
+        .chat-shell {
+            height: 100vh;
+            height: 100dvh;
         }
 
         /* Custom scrollbar for emoji picker and chat */
@@ -77,24 +83,24 @@
 <body class="bg-gray-900">
     <!-- sent Message sound -->
     <audio id="recieveMessageAudio">
-        <source src="../img/recieveMessage.mp3" type="audio/mp3">
+        <source src="/img/recieveMessage.mp3" type="audio/mp3">
     </audio>
 
-    <div class="grid grid-rows-[auto,1fr,auto] h-screen bg-gray-900 text-white">
+    <div id="chatShell" class="chat-shell grid grid-rows-[auto,1fr,auto] bg-gray-900 text-white">
         <!-- WhatsApp Header Bar -->
         <div
             class="flex px-3 py-2.5 mx-0 text-white bg-gray-900 border-b border-gray-700 justify-between items-center z-10 shadow-sm">
             <div class="flex items-center gap-3">
                 <% if(user2=="Prattle AI" ) { %>
                     <div class="relative">
-                        <img src="../img/logo 1.png" alt="Prattle AI"
+                        <img src="/img/logo 1.png" alt="Prattle AI"
                             class="w-10 h-10 p-1 bg-gray-800 rounded-full border border-gray-700">
                         <span
                             class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-gray-900"></span>
                     </div>
                     <% } else { %>
                         <div class="relative">
-                            <img src="../img/profile.png" alt="<%= user2 %>"
+                            <img src="/img/profile.png" alt="<%= user2 %>"
                                 class="w-10 h-10 rounded-full border border-gray-600 object-cover">
                             <span id="userStatusDot"
                                 class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-gray-500 rounded-full border-2 border-gray-900"></span>
@@ -135,7 +141,7 @@
                         </span></p>
                     <p class="mb-1 text-gray-400">
                         <%= userDetails.username %> has <span class="text-xs text-emerald-400 font-bold">
-                                <%= userDetails.followed_user ? userDetails.followed_user.length : 0 %>
+                                <%= userDetails.followed_user ? Math.max(userDetails.followed_user.length - 1, 0) : 0 %>
                             </span> friends
                     </p>
                 </div>
@@ -143,12 +149,12 @@
         </div>
 
         <!-- Chat Messages Area (WhatsApp wallpaper) -->
-        <div id="chatBox" class="overflow-y-auto p-3 sm:p-4 space-y-2 chat-container custom-scrollbar whatsapp-bg">
+        <div id="chatBox" class="overflow-y-auto p-3 sm:p-4 space-y-2 custom-scrollbar whatsapp-bg">
             <!-- Messages rendered here -->
         </div>
 
         <!-- WhatsApp Bottom Input Section -->
-        <div class="bg-gray-900 p-2 sm:p-2.5 chat-input-container relative border-t border-gray-700">
+        <div class="bg-gray-900 p-2 sm:p-2.5 relative border-t border-gray-700">
             <!-- Emoji Picker Container Popover -->
             <div id="emojiPickerContainer"
                 class="hidden opacity-0 scale-95 pointer-events-none absolute bottom-16 left-2 sm:left-4 z-50 bg-gray-900/98 backdrop-blur-xl border border-gray-700 shadow-2xl rounded-2xl w-[94vw] sm:w-[360px] max-h-[400px] flex flex-col transition-all duration-150 ease-out">
@@ -218,6 +224,25 @@
             const sendChatBtn = document.querySelector('#sendChatBtn');
             const sendChatInput = document.querySelector('#sendChatInput');
             const chatBox = document.querySelector('#chatBox');
+            const chatShell = document.getElementById('chatShell');
+
+            // BUG FIX (mobile keyboard floats header/messages off-screen): keep the shell locked to
+            // the real visible viewport (shrinks when the keyboard opens) and keep the page pinned at
+            // the top instead of letting the browser scroll it to "reveal" the focused input.
+            function syncViewportHeight() {
+                if (!chatShell) return;
+                const visibleHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+                chatShell.style.height = visibleHeight + 'px';
+                window.scrollTo(0, 0);
+                if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+            }
+
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', syncViewportHeight);
+                window.visualViewport.addEventListener('scroll', syncViewportHeight);
+            }
+            window.addEventListener('orientationchange', () => setTimeout(syncViewportHeight, 250));
+            syncViewportHeight();
 
             // WhatsApp-style dynamic textarea expansion
             function updateWhatsAppInput() {
@@ -301,6 +326,11 @@
             if (inputMessageEl) {
                 inputMessageEl.addEventListener('input', updateWhatsAppInput);
 
+                // BUG FIX: re-measure right after the keyboard starts opening/closing on focus/blur —
+                // visualViewport's own resize event can lag on some Android/iOS versions.
+                inputMessageEl.addEventListener('focus', () => setTimeout(syncViewportHeight, 300));
+                inputMessageEl.addEventListener('blur', () => setTimeout(syncViewportHeight, 300));
+
                 // Handle Enter key for sending messages (Shift+Enter for newline)
                 inputMessageEl.addEventListener('keydown', function (e) {
                     if (e.key === 'Enter' && !e.shiftKey) {
@@ -347,13 +377,33 @@
                 joiningDateEl.textContent = formatJoiningDate('<%= userDetails.joining_date %>');
             }
 
-            document.querySelector('#userDetailsBtn')?.addEventListener('mouseover', () => {
-                document.querySelector('#userDetailsCont').style.display = 'block';
-            });
+            const userDetailsBtn = document.querySelector('#userDetailsBtn');
+            const userDetailsCont = document.querySelector('#userDetailsCont');
 
-            document.querySelector('#userDetailsBtn')?.addEventListener('mouseout', () => {
-                document.querySelector('#userDetailsCont').style.display = 'none';
-            });
+            if (userDetailsBtn && userDetailsCont) {
+                // Desktop: preview on hover
+                userDetailsBtn.addEventListener('mouseover', () => {
+                    userDetailsCont.style.display = 'block';
+                });
+                userDetailsBtn.addEventListener('mouseout', () => {
+                    userDetailsCont.style.display = 'none';
+                });
+
+                // BUG FIX: mouseover/mouseout never fire reliably on touch devices, so this info
+                // panel was effectively impossible to open on mobile. Make it tap-toggleable too,
+                // and dismiss it when tapping anywhere else.
+                userDetailsBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isOpen = userDetailsCont.style.display === 'block';
+                    userDetailsCont.style.display = isOpen ? 'none' : 'block';
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!userDetailsCont.contains(e.target) && e.target !== userDetailsBtn) {
+                        userDetailsCont.style.display = 'none';
+                    }
+                });
+            }
 
             document.querySelector('#eraseChat')?.addEventListener('click', () => {
                 if (chatBox) chatBox.innerHTML = "";
